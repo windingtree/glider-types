@@ -6,9 +6,10 @@
     "access": "public"
   },
   "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "types": "types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "scripts": {
     "prepare": "husky install",

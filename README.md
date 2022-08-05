@@ -23,6 +23,6 @@ import { simard, derbysoft } from '@windingtree/glider-types';
 ### Typescript types
 
 ```typescript
-import { Guarantee, Deposit } from '@windingtree/glider-types/type/simard';
-import { Price } from '@windingtree/glider-types/type/derbysoft';
+import { Guarantee, Deposit } from '@windingtree/glider-types/types/simard';
+import { Price } from '@windingtree/glider-types/types/derbysoft';
 ```
