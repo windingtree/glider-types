@@ -1,7 +1,9 @@
 name: Publish Package to npmjs
+
 on:
-  release:
-    types: [created]
+  push:
+    branches: [main]
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,4 +21,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-        run: yarn semantic-release
+        run: npx semantic-release
