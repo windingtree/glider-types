@@ -1,0 +1,39 @@
+{
+  "name": "@windingtree/glider-types",
+  "version": "0.0.0-semantic-release",
+  "description": "Typescript types of Glider projects",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "husky install",
+    "commit": "git-cz -S",
+    "changelog": "conventional-changelog -p angular -r 2 -i CHANGELOG.md -s",
+    "build": "scripts/build.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/windingtree/glider-types.git"
+  },
+  "author": "Winding Tree Developers <dev@windingtree.com>",
+  "license": "GPLV3",
+  "bugs": {
+    "url": "https://github.com/windingtree/glider-types/issues"
+  },
+  "homepage": "https://github.com/windingtree/glider-types#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
+    "@semantic-release/changelog": "^6.0.1",
+    "semantic-release": "^19.0.3",
+    "husky": "^8.0.1",
+    "js-yaml": "^4.1.0",
+    "json-schema-to-typescript": "^11.0.1",
+    "git-cz": "^4.9.0"
+  }
+}
