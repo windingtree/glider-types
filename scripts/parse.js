@@ -51,6 +51,13 @@ const files =  [
     definitions: 'components.schemas',
     replacePath: 'components/schemas',
     out: 'dist/derbysoft.json'
+  },
+  {
+    name: 'Win',
+    path: 'dist/win.yaml',
+    definitions: 'components.schemas',
+    replacePath: 'components/schemas',
+    out: 'dist/win.json'
   }
 ];
 
