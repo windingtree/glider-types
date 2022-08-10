@@ -17,6 +17,7 @@ import { simard, derbysoft, win } from '@windingtree/glider-types';
 // simard.Guarantee
 // simard.Deposit
 // derbysoft.Price
+// win.Guest
 // ...
 ```
 
