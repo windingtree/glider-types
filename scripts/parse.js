@@ -47,7 +47,7 @@ const files =  [
   },
   {
     name: 'DerbysoftProxy',
-    path: 'dist/derbysoft.yaml',
+    path: 'src/derbysoft-proxy.yaml',
     definitions: 'components.schemas',
     replacePath: 'components/schemas',
     out: 'dist/derbysoft.json'
