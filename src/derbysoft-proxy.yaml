@@ -53,12 +53,12 @@ paths:
                           },
                         "arrival": "2020-07-02T00:00:00Z",
                         "departure": "2020-07-03T00:00:00Z",
-                        "roomCount":1
+                        "roomCount": 1
                       },
                     "passengers":
                       [
                         { "type": "ADT", "count": 2 },
-                        { "type": "CHD", "count": 1, "childrenAges":[13]},
+                        { "type": "CHD", "count": 1, "childrenAges": [13] },
                       ],
                   }
               hotelSearchByCircle:
@@ -73,17 +73,17 @@ paths:
                               {
                                 "long": 18.05437602,
                                 "lat": 59.33309777,
-                                "radius": 50
+                                "radius": 50,
                               }
                           },
                         "arrival": "2020-07-02T00:00:00Z",
                         "departure": "2020-07-03T00:00:00Z",
-                        "roomCount":1
+                        "roomCount": 1
                       },
                     "passengers":
                       [
                         { "type": "ADT", "count": 2 },
-                        { "type": "CHD", "count": 1, "childrenAges":[13]},
+                        { "type": "CHD", "count": 1, "childrenAges": [13] },
                       ],
                   }
       responses:
@@ -414,7 +414,7 @@ components:
     PhoneNumber:
       description: A phone number
       type: string
-      pattern: '^([+]{0,1})([0-9- ()/]+)$'
+      pattern: "^([+]{0,1})([0-9- ()/]+)$"
       example: "+32123456789"
 
     Name:
@@ -530,11 +530,7 @@ components:
           type: array
           items:
             type: number
-      example:
-        {
-          "type": "ADT",
-          "count": 1
-        }
+      example: { "type": "ADT", "count": 1 }
 
     PassengerBooking:
       description: A representation of a passenger
@@ -602,8 +598,8 @@ components:
           "lastnames": ["Marley"],
           "firstnames": ["Bob"],
           "gender": "Male",
-          "birthdate" : "1980-03-21",
-          "contactInformation": ["+32123456789", "contact@org.co.uk"]
+          "birthdate": "1980-03-21",
+          "contactInformation": ["+32123456789", "contact@org.co.uk"],
         }
 
     LocationSearch:
@@ -647,12 +643,7 @@ components:
           type: number
         radius:
           type: number
-      example:
-        {
-          "lat": 50.0929802,
-          "long": 14.4012451,
-          "radius": 100
-        }
+      example: { "lat": 50.0929802, "long": 14.4012451, "radius": 100 }
 
     Photo:
       description: Photo image file
@@ -691,7 +682,7 @@ components:
             "width": 1024,
             "height": 683,
             "url": "https://media.hosting.com/1234.jpg",
-          }
+          },
         ]
 
     Disclosure:
@@ -737,7 +728,20 @@ components:
     Accommodation:
       description: An accommodation object
       type: object
-      required: ["hotelId", "name", "type", "description", "location", "rating", "contactInformation", "checkinoutPolicy", "otherPolicies", "media", "roomTypes"]
+      required:
+        [
+          "hotelId",
+          "name",
+          "type",
+          "description",
+          "location",
+          "rating",
+          "contactInformation",
+          "checkinoutPolicy",
+          "otherPolicies",
+          "media",
+          "roomTypes"
+        ]
       properties:
         hotelId:
           description: Id of the hotel
@@ -783,37 +787,44 @@ components:
           type: number
         long:
           type: number
-      example:
-        {
-          "lat": 52.520008,
-          "long": 13.524954
-        }
+      example: { "lat": 52.520008, "long": 13.524954 }
 
     RoomTypes:
-        description: A room type object
-        type: object
-        required: ["name", "description", "amenities", "size", "maximumOccupancy", "media", "policies"]
-        properties:
-          name:
-            description: The name of this room type
-            type: string
-            example: Twin beds
-          description:
-            description: A description of the room type
-            type: string
-            example: Standard twin rooms with two single beds
-          amenities:
+      description: A room type object
+      type: object
+      required:
+        [
+          "name",
+          "description",
+          "amenities",
+          "size",
+          "maximumOccupancy",
+          "media",
+          "policies",
+        ]
+      properties:
+        name:
+          description: The name of this room type
+          type: string
+          example: Twin beds
+        description:
+          description: A description of the room type
+          type: string
+          example: Standard twin rooms with two single beds
+        amenities:
+          type: array
+          items:
             $ref: "#/components/schemas/RoomAmenities"
-          size:
-            $ref: "#/components/schemas/RoomSize"
-            nullable: true
-          maximumOccupancy:
-            $ref: "#/components/schemas/RoomOccupancy"
-          media:
-            $ref: "#/components/schemas/Media"
-            nullable: true
-          policies:
-            $ref: "#/components/schemas/RoomPolicies"
+        size:
+          $ref: "#/components/schemas/RoomSize"
+          nullable: true
+        maximumOccupancy:
+          $ref: "#/components/schemas/RoomOccupancy"
+        media:
+          $ref: "#/components/schemas/Media"
+          nullable: true
+        policies:
+          $ref: "#/components/schemas/RoomPolicies"
 
     ContactInformation:
       description: Contact information of a hotel
@@ -921,7 +932,7 @@ components:
           description: The usage of the fare item
           type: string
           enum:
-            - base      # Base Fare
+            - base # Base Fare
             - surcharge # Surcharge
           default: base
         code:
@@ -965,10 +976,8 @@ components:
         $ref: "#/components/schemas/AdditionalPricePlanProperties"
       example:
         {
-          "7b7b18e2-7357-4e98-9be6-aa182e0b090a": {
-            "accommodation": "prov.1234",
-            "roomType": "ND"
-          }
+          "7b7b18e2-7357-4e98-9be6-aa182e0b090a":
+            { "accommodation": "prov.1234", "roomType": "ND" }
         }
 
     AdditionalPricePlanProperties:
@@ -996,12 +1005,7 @@ components:
           type: string
         roomTypeId:
           type: string
-      example:
-        {
-          "mealPlan": "BB",
-          "ratePlan": "BAR",
-          "roomTypeId": "FM4"
-        }
+      example: { "mealPlan": "BB", "ratePlan": "BAR", "roomTypeId": "FM4" }
 
     Order:
       description: An Order object
@@ -1118,32 +1122,32 @@ components:
       example:
         {
           "offerId": "0cf08a8c-9f88-42c5-9bb1-b2ad0f329d87",
-          "offer": {
-            "expiration": "2022-08-11T00:09:41.374Z",
-            "price": {
-                "currency": "JPY",
-                "public": 21000,
-                "taxes": 0
-            },
-            "pricedItems": [
-                {
-                    "fare": [
-                        {
-                            "usage": "base",
-                            "amount": 21000,
-                            "description": "Base amount"
-                        }
-                    ],
-                    "taxes": []
-                }
-            ],
-            "disclosures": [
+          "offer":
+            {
+              "expiration": "2022-08-11T00:09:41.374Z",
+              "price": { "currency": "JPY", "public": 21000, "taxes": 0 },
+              "pricedItems":
                 [
+                  {
+                    "fare":
+                      [
+                        {
+                          "usage": "base",
+                          "amount": 21000,
+                          "description": "Base amount",
+                        },
+                      ],
+                    "taxes": []
+                  },
+                ],
+              "disclosures":
+                [
+                  [
                     "Exclusive of Occupancy Tax 5 JPY per person per night",
-                    "Exclusive of City Tax 15% per room per night"
+                    "Exclusive of City Tax 15% per room per night",
+                  ]
                 ]
-            ]
-          }
+            }
         }
 
     CreateWithOfferResponse:
