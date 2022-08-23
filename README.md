@@ -26,5 +26,5 @@ import { simard, derbysoft, win } from '@windingtree/glider-types';
 ```typescript
 import { Guarantee, Deposit } from '@windingtree/glider-types/types/simard';
 import { Price } from '@windingtree/glider-types/types/derbysoft';
-import { OffersSearchResponse, Offer } from '@windingtree/glider-types/types/win';
+import { OffersSearchResponse } from '@windingtree/glider-types/types/win';
 ```
