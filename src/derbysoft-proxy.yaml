@@ -1009,7 +1009,7 @@ components:
 
     Order:
       description: An Order object
-      required: ["supplierReservationId", "status", "passengers"]
+      required: ["supplierReservationId", "status"]
       type: object
       properties:
         supplierReservationId:
@@ -1017,13 +1017,6 @@ components:
           type: string
         restrictions:
           $ref: "#/components/schemas/ServiceRestrictions"
-        passengers:
-          description: The passengers involved in the order
-          type: array
-          minItems: 1
-          maxItems: 99
-          items:
-            $ref: "#/components/schemas/PassengerBooking"
         status:
           description: Status of an order
           type: string
