@@ -1009,8 +1009,8 @@ components:
 
     Order:
       description: An Order object
-      required: ["supplierReservationId", "status"]
       type: object
+      required: ["supplierReservationId", "status"]
       properties:
         supplierReservationId:
           description: Hotel reservation ID that should be presented to the client or at reception desk
