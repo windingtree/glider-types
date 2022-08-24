@@ -1009,11 +1009,12 @@ components:
 
     Order:
       description: An Order object
-      required: ["price", "status", "passengers"]
+      required: ["supplierReservationId", "status", "passengers"]
       type: object
       properties:
-        price:
-          $ref: "#/components/schemas/Price"
+        supplierReservationId:
+          description: Hotel reservation ID that should be presented to the client or at reception desk
+          type: string
         restrictions:
           $ref: "#/components/schemas/ServiceRestrictions"
         passengers:
