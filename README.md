@@ -1,4 +1,5 @@
 # glider-types
+
 Typescript types of Glider projects: Simard Pay, Derbysoft Proxy, Win.so backend
 
 ## Getting started
@@ -26,5 +27,8 @@ import { simard, derbysoft, win } from '@windingtree/glider-types';
 ```typescript
 import { Guarantee, Deposit } from '@windingtree/glider-types/types/simard';
 import { Price } from '@windingtree/glider-types/types/derbysoft';
-import { OffersSearchResponse, PricePlansReferences } from '@windingtree/glider-types/types/win';
+import {
+  OffersSearchResponse,
+  PricePlansReferences
+} from '@windingtree/glider-types/types/win';
 ```
