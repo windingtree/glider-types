@@ -1,4 +1,4 @@
 node_modules
-typechain
+build
+dist
 .github
-src/utils/hotjar.js

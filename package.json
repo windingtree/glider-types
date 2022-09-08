@@ -6,16 +6,16 @@
     "access": "public"
   },
   "main": "dist/index.js",
-  "types": "types/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "types"
+    "dist"
   ],
   "scripts": {
     "prepare": "husky install",
     "commit": "git-cz -S",
     "changelog": "conventional-changelog -p angular -r 2 -i CHANGELOG.md -s",
     "lint": "npx eslint . --ext .js && npx prettier -c .",
+    "lint:fix": "npx eslint . --fix --ext .js && npx prettier -w .",
     "build": "node scripts/build.js"
   },
   "repository": {
