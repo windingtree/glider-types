@@ -372,7 +372,7 @@ paths:
         description: ISO4217 Currency Code of the balance to withdraw
         required: true
         schema:
-        $ref: '#/components/schemas/Currency'
+          $ref: '#/components/schemas/Currency'
     post:
       tags:
         - balances
