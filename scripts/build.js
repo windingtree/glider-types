@@ -1,7 +1,9 @@
 const fs = require('fs');
+const { exec } = require('child_process');
 const path = require('path');
 const yaml = require('js-yaml');
 const json2ts = require('json-schema-to-typescript');
+const handlebars = require('handlebars');
 
 // The path from where the script has been started
 const basePath = process.cwd();
@@ -10,20 +12,31 @@ const basePath = process.cwd();
 const sharedDefinitions = 'src/shared-definitions.yaml';
 const supportedApis = [
   {
-    name: 'derbysoft-proxy',
-    path: 'src/derbysoft-proxy.yaml'
+    name: 'accommodations',
+    path: 'src/accommodations.yaml'
   }
 ];
+
+// Async exec
+const execAsync = (command) =>
+  new Promise((resolve, reject) => {
+    exec(command, (error, value) => (error ? reject(error) : resolve(value)));
+  });
 
 // File read helper
 const getFile = (filePath) => fs.readFileSync(path.resolve(basePath, filePath), 'utf8');
 
-// File write helper
-const writeFile = (dir, name, data) => {
-  dir = path.resolve(basePath, dir);
+// Create dir if not exists
+const createDir = (dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
+};
+
+// File write helper
+const writeFile = (dir, name, data) => {
+  dir = path.resolve(basePath, dir);
+  createDir(dir);
   return fs.writeFileSync(`${dir}/${name}`, data, 'utf8');
 };
 
@@ -96,6 +109,34 @@ const parseApi = (api, defs) => {
 const buildTypes = (definitions, name) =>
   json2ts.compile({ definitions }, name, { unreachableDefinitions: true });
 
+// Build dist files
+const buildDist = async () => {
+  const schemas = yaml.load(getFile(sharedDefinitions));
+  const parsedApis = supportedApis.map((api) => parseApi(api, schemas));
+  await Promise.all(
+    parsedApis.map(async (a) => {
+      // save swagger file
+      writeFile('dist', `${a.name}.yaml`, a.swagger);
+      const definitions = getDefinitions(a.swagger);
+      // save types
+      writeFile('dist', `${a.name}.d.ts`, await buildTypes(definitions, a.name));
+      // save JSON schema
+      writeFile(
+        'dist',
+        `${a.name}.json`,
+        JSON.stringify(
+          {
+            $id: a.name,
+            definitions
+          },
+          null,
+          2
+        )
+      );
+    })
+  );
+};
+
 // Generates types index file (index.d.ts)
 const buildTypesIndex = () => {
   const content = `${supportedApis
@@ -122,30 +163,32 @@ module.exports = { ${supportedApis.map((a) => normalizeName(a.name)).join(', ')}
   writeFile('dist', 'index.js', content);
 };
 
+const buildPages = async () => {
+  createDir('pages');
+  await execAsync('cp -r ./src/ui/static/* ./pages');
+  const indexHtml = handlebars.compile(getFile('./pages/index.html'));
+  writeFile(
+    'pages',
+    'index.html',
+    indexHtml({ projects: supportedApis.map((a) => normalizeName(a.name)) })
+  );
+  supportedApis.forEach(async (a) => {
+    createDir(`pages/${normalizeName(a.name)}`);
+    await execAsync(
+      `cp ./dist/${normalizeName(a.name)}.yaml ./pages/${normalizeName(
+        a.name
+      )}/swagger.yaml`
+    );
+    await execAsync(`cp -r ./src/ui/project/* ./pages/${normalizeName(a.name)}`);
+  });
+};
+
 // The main build script file
 const main = async () => {
-  const rawShared = getFile(sharedDefinitions);
-  const schemas = yaml.load(rawShared);
-  const parsedApis = supportedApis.map((api) => parseApi(api, schemas));
-  parsedApis.forEach(async (a) => {
-    writeFile('dist', `${a.name}.yaml`, a.swagger);
-    const definitions = getDefinitions(a.swagger);
-    writeFile('dist', `${a.name}.d.ts`, await buildTypes(definitions, a.name));
-    writeFile(
-      'dist',
-      `${a.name}.json`,
-      JSON.stringify(
-        {
-          $id: a.name,
-          definitions
-        },
-        null,
-        2
-      )
-    );
-  });
+  await buildDist();
   buildTypesIndex();
   buildJsonSchemasIndex();
+  await buildPages();
 };
 
 main()

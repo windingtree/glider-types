@@ -11,8 +11,10 @@ info:
   version: 1.0.0
 
 servers:
-  - url: /api/v1
-    description: Current server
+  - url: https://qa.hotels.simard.io/v1
+    description: Derbysoft Proxy Test API server
+  - url: https://qa.1a-hotels.simard.io/v1
+    description: Amadeus Proxy Test API server
 
 tags:
   - name: offers

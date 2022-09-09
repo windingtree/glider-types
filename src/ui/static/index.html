@@ -13,7 +13,9 @@
   <body>
     <div id="swagger-ui">
       <ul>
-          <li><a href="accommodations">accommodations</a></li>
+        {{#each projects}}
+          <li><a href="{{this}}">{{this}}</a></li>
+        {{/each}}
       </ul>
     </div>
   </body>
