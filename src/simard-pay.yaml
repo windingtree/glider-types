@@ -223,18 +223,18 @@ paths:
         - bearerAuth: []
 
   /balances/guarantees/{guaranteeId}:
+    parameters:
+      - name: guaranteeId
+        in: path
+        description: Guarantee Identifier
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
     get:
       tags:
         - balances
       summary: Allows to retrieve a guarantee for which the ORG.ID is a party
       operationId: getGuarantee
-      parameters:
-        - name: guaranteeId
-          in: path
-          description: Guarantee Identifier
-          required: true
-          schema:
-            $ref: '#/components/schemas/UUID'
       responses:
         200:
           description: The guarantee details
@@ -284,18 +284,18 @@ paths:
         - bearerAuth: []
 
   /balances/guarantees/{guaranteeId}/claim:
+    parameters:
+      - name: guaranteeId
+        in: path
+        description: Guarantee Identifier
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
     post:
       tags:
         - balances
       summary: Allows the receiving ORG.ID to claim a guarantee
       operationId: claimGuarantee
-      parameters:
-        - name: guaranteeId
-          in: path
-          description: Guarantee Identifier
-          required: true
-          schema:
-            $ref: '#/components/schemas/UUID'
       responses:
         200:
           description: Guarantee has been settled
@@ -321,18 +321,18 @@ paths:
         - bearerAuth: []
 
   /balances/guarantees/{guaranteeId}/claimWithCard:
+    parameters:
+      - name: guaranteeId
+        in: path
+        description: Guarantee Identifier
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
     post:
       tags:
         - balances
       summary: Allows to claim a guarantee and get a virtual card to spend
       operationId: claimGuaranteeWithCard
-      parameters:
-        - name: guaranteeId
-          in: path
-          description: Guarantee Identifier
-          required: true
-          schema:
-            $ref: '#/components/schemas/UUID'
       requestBody:
         content:
           application/json:
@@ -366,18 +366,18 @@ paths:
         - bearerAuth: []
 
   /balances/{currency}/withdraw:
+    parameters:
+      - name: currency
+        in: path
+        description: ISO4217 Currency Code of the balance to withdraw
+        required: true
+        schema:
+        $ref: '#/components/schemas/Currency'
     post:
       tags:
         - balances
       summary: Allows to withdraw a balance to a configured account
       operationId: withdraw
-      parameters:
-        - name: currency
-          in: path
-          description: ISO4217 Currency Code of the balance to withdraw
-          required: true
-          schema:
-          $ref: '#/components/schemas/Currency'
       responses:
         200:
           description: Withdrawal request has been accepted
@@ -505,18 +505,18 @@ paths:
         - bearerAuth: []
 
   /accounts/{accountId}:
+    parameters:
+      - name: accountId
+        in: path
+        description: Account Identifier to update
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
     post:
       tags:
         - accounts
       summary: Update an existing account
       operationId: updateAccount
-      parameters:
-        - name: accountId
-          in: path
-          description: Account Identifier to update
-          required: true
-          schema:
-            $ref: '#/components/schemas/UUID'
       requestBody:
         content:
           application/json:
@@ -659,18 +659,18 @@ paths:
         - bearerAuth: []
 
   /cards/{cardId}:
+    parameters:
+      - name: cardId
+        in: path
+        description: Card Identifier to cancel
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
     delete:
       tags:
         - cards
       summary: Cancels a virtual card, returning unused balance
       operationId: cancelCard
-      parameters:
-        - name: cardId
-          in: path
-          description: Card Identifier to cancel
-          required: true
-          schema:
-            $ref: '#/components/schemas/UUID'
       responses:
         200:
           description: Card has been deleted
@@ -744,18 +744,18 @@ paths:
         - bearerAuth: []
 
   /quotes/{quoteId}:
+    parameters:
+      - name: quoteId
+        in: path
+        description: Identifier of the quote to retrieve
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
     get:
       tags:
       - quotes
       summary: Retrieve a quote
       operationId: retrieveQuote
-      parameters:
-        - name: quoteId
-          in: path
-          description: Identifier of the quote to retrieve
-          required: true
-          schema:
-            $ref: '#/components/schemas/UUID'
       responses:
         200:
           description: Quote has been retrieved
@@ -886,18 +886,18 @@ paths:
         - bearerAuth: []
 
   /tokens/{tokenId}:
+    parameters:
+      - name: tokenId
+        in: path
+        description: Token Identifier
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
     get:
       tags:
         - tokens
       summary: Retrieve a card token guarantee
       operationId: getToken
-      parameters:
-        - name: tokenId
-          in: path
-          description: Token Identifier
-          required: true
-          schema:
-            $ref: '#/components/schemas/UUID'
       responses:
         200:
           description: Card Token has been retrieved
@@ -1023,18 +1023,18 @@ paths:
         - bearerAuth: []
 
   /tokens/{tokenId}/travel-components:
+    parameters:
+      - name: tokenId
+        in: path
+        description: Token Identifier
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
     post:
       tags:
         - tokens
       summary: Indicates travel components for a given token
       operationId: createTravelComponents
-      parameters:
-        - name: tokenId
-          in: path
-          description: Token Identifier
-          required: true
-          schema:
-            $ref: '#/components/schemas/UUID'
       requestBody:
         content:
           application/json:
