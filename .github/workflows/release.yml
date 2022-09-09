@@ -2,7 +2,7 @@ name: Publish Package to npm
 
 on:
   push:
-    branches: ["new-repo"]
+    branches: ["feat/new-repo"]
 
 jobs:
   build:
