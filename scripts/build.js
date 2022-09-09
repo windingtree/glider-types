@@ -98,6 +98,7 @@ const parseApi = (api, defs) => {
     swagger: yaml.dump({
       ...apiObj,
       components: {
+        securitySchemes: defs.components.securitySchemes,
         schemas
       }
     }),

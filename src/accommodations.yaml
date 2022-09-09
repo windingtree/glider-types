@@ -1,13 +1,13 @@
-openapi: 3.0.1
+openapi: 3.0.3
 
 info:
-  title: The Derbysoft Proxy
-  description: 'This is the interface documentation for the REST api interface with the Winding Tree Aggregator'
+  title: The Accommodations
+  description: 'This is the interface documentation for the RESTful API interface for the set of Windingtree Accommodations Proxy servers'
   contact:
     email: dev@windingtree.com
   license:
-    name: Apache License
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    name: GNU GENERAL PUBLIC LICENSE v3
+    url: https://www.gnu.org/licenses/gpl-3.0.html
   version: 1.0.0
 
 servers:
@@ -80,9 +80,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
-        - orgid_auth:
-            - read:orders
-        - orgid_token: []
+        - bearerAuth: []
       x-codegen-request-body-name: body
 
   /offers/{offerId}/price:
@@ -143,9 +141,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
-        - orgid_auth:
-            - read:offers
-        - orgid_token: []
+        - bearerAuth: []
+      x-codegen-request-body-name: body
 
   /orders/createWithOffer:
     post:
@@ -204,9 +201,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
-        - orgid_auth:
-            - write:orders
-        - orgid_token: []
+        - bearerAuth: []
       x-codegen-request-body-name: body
 
   /orders/cancel:
@@ -264,21 +259,5 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
-        - orgid_auth:
-            - write:orders
-        - orgid_token: []
+        - bearerAuth: []
       x-codegen-request-body-name: body
-
-      description: Confirmation of an order cancellation
-      type: object
-      required: ['orderId', 'status']
-      properties:
-        orderId:
-          description: Order ID
-          allOf:
-            - $ref: '#/components/schemas/UUID'
-        status:
-          description: Result of cancellation
-          type: string
-      example:
-        { 'orderId': '11111111-2222-3333-4444-000000000001', 'status': 'CANCELLED' }
