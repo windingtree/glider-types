@@ -14,6 +14,10 @@ const supportedApis = [
   {
     name: 'accommodations',
     path: 'src/accommodations.yaml'
+  },
+  {
+    name: 'simard',
+    path: 'src/simard-pay.yaml'
   }
 ];
 

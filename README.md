@@ -60,7 +60,8 @@ If it is required, a definition can have format validation rules in regular expr
 
 ## Supported projects
 
-- Derbysoft proxy
+- The accommodations API
+- Simard
 
 To add new project:
 
@@ -68,8 +69,8 @@ To add new project:
 
 ```javascript
 {
-  name: 'derbysoft-proxy', // Unique project name
-  path: 'src/derbysoft-proxy.yaml' // Base project swagger file
+  name: 'project-name', // Unique project name
+  path: 'src/project-name.yaml' // Base project swagger file
 }
 ```
 

@@ -205,7 +205,7 @@ paths:
       x-codegen-request-body-name: body
 
   /orders/cancel:
-    post:
+    delete:
       tags:
         - orders
       summary: Cancel an existing order

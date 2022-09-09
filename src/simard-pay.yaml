@@ -1,0 +1,1117 @@
+openapi: 3.0.3
+
+info:
+  title: Simard
+  description: 'Interface documentation for the REST API of Simard, the Winding Tree Settlement Platform'
+  contact:
+    email: mathieu@windingtree.com
+  license:
+    name: GNU GENERAL PUBLIC LICENSE v3
+    url: https://www.gnu.org/licenses/gpl-3.0.html
+  version: 1.0.1
+
+servers:
+- url: https://staging.payment.simard.io/api/v1
+  description: The Simard Pay Staging server
+
+tags:
+- name: balances
+  description: Operations with Balances
+- name: quotes
+  description: Operations with currency conversions
+- name: accounts
+  description: Operation with recipient accounts
+- name: cards
+  description: Operation with virtual cards
+- name: tokens
+  description: Operations with card tokens
+- name: test
+  description: Operations available only in test environments
+
+paths:
+  /balances:
+    get:
+      tags:
+        - balances
+      summary: Get the balances associated to the authenticated ORG.ID
+      operationId: getBalances
+      responses:
+        200:
+          description: The balances in each currency
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalancesRequest'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/depositInstructions:
+    get:
+      tags:
+        - balances
+      summary: Get the deposit instructions
+      operationId: getDepositInstructions
+      responses:
+        200:
+          description: The account details to make a deposit to, indexed by currency
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepositInstructionsRequest'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/deposits:
+    post:
+      tags:
+        - balances
+      summary: Create a deposit
+      operationId: deposit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Deposit'
+      responses:
+        200:
+          description: The settlement identifier associated to the deposit
+          content:
+            application/json:
+              schema:
+                properties:
+                  settlementId:
+                    $ref: '#/components/schemas/UUID'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/swap:
+    post:
+      tags:
+        - balances
+      summary: Swap currencies using quotes. Balance must be sufficient.
+      operationId: swap
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                quotes:
+                  description: Array of quoteId created using the quotes ressource
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: Settlements have been created for the provided quotes
+          content:
+            application/json:
+              schema:
+                properties:
+                  sources:
+                    description: The settlement identifiers associated to the funding of quotes. Order not guaranteed.
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UUID'
+                  targets:
+                    description: The settlement identifiers associated to the deposit of quotes. Order not guaranteed.
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UUID'
+        400:
+          description: The request is incorrect, or balance is insufficient
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: One of the quote is not allowed to be retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: One of the quote has not been found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/guarantees:
+    post:
+      tags:
+        - balances
+      summary: Creates a financial guarantee on the balance
+      operationId: reserveBalance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Guarantee'
+            example:
+              {
+                "currency": "USD",
+                "amount": "300.00",
+                "creditorOrgId": "0x71cd1781a3082f33d2521ac8290c9d4b3b3b116e4e8548a4914b71a1f7201da0",
+                "expiration": "2020-03-30T13:37:38.835Z",
+              }
+      responses:
+        200:
+          description: The guarantee identifier
+          content:
+            application/json:
+              schema:
+                properties:
+                  guaranteeId:
+                    $ref: '#/components/schemas/UUID'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/guarantees/{guaranteeId}:
+    get:
+      tags:
+        - balances
+      summary: Allows to retrieve a guarantee for which the ORG.ID is a party
+      operationId: getGuarantee
+      parameters:
+        - name: guaranteeId
+          in: path
+          description: Guarantee Identifier
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: The guarantee details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guarantee'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - balances
+      summary: Allows to cancel an expired guarantee
+      operationId: cancelGuarantee
+      responses:
+        200:
+          description: Guarantee has been canceled
+          content:
+            application/json: {}
+            example: {}
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/guarantees/{guaranteeId}/claim:
+    post:
+      tags:
+        - balances
+      summary: Allows the receiving ORG.ID to claim a guarantee
+      operationId: claimGuarantee
+      parameters:
+        - name: guaranteeId
+          in: path
+          description: Guarantee Identifier
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: Guarantee has been settled
+          content:
+            application/json:
+              schema:
+                properties:
+                  settlementId:
+                    $ref: '#/components/schemas/UUID'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/guarantees/{guaranteeId}/claimWithCard:
+    post:
+      tags:
+        - balances
+      summary: Allows to claim a guarantee and get a virtual card to spend
+      operationId: claimGuaranteeWithCard
+      parameters:
+        - name: guaranteeId
+          in: path
+          description: Guarantee Identifier
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expiration:
+                  description: Validity of the virtual card
+                  type: string
+                  format: date-time
+      responses:
+        200:
+          description: Card has been created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/{currency}/withdraw:
+    post:
+      tags:
+        - balances
+      summary: Allows to withdraw a balance to a configured account
+      operationId: withdraw
+      parameters:
+        - name: currency
+          in: path
+          description: ISO4217 Currency Code of the balance to withdraw
+          required: true
+          schema:
+          $ref: '#/components/schemas/Currency'
+      responses:
+        200:
+          description: Withdrawal request has been accepted
+          content:
+            application/json:
+              schema:
+                properties:
+                  settlementId:
+                    $ref: '#/components/schemas/UUID'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /balances/simulateDeposit:
+    post:
+      tags:
+        - test
+      summary: TEST ONLY Simulates a bank transfer deposit
+      operationId: simulateBankDeposit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                currency:
+                  $ref: '#/components/schemas/Currency'
+                amount:
+                  $ref: '#/components/schemas/Amount'
+      responses:
+        200:
+          description: The credit identifier
+          content:
+            application/json:
+              schema:
+                properties:
+                  settlementId:
+                    $ref: '#/components/schemas/UUID'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /accounts:
+    post:
+      tags:
+      - accounts
+      summary: Provides a recipient account
+      operationId: registerAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+      responses:
+        200:
+          description: Identifier of the recipient account
+          content:
+            application/json:
+              schema:
+                properties:
+                  accountId:
+                    $ref: '#/components/schemas/UUID'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+    get:
+      tags:
+        - accounts
+      summary: Get the list of accounts
+      responses:
+        200:
+          description: Indexed list of accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Account'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /accounts/{accountId}:
+    post:
+      tags:
+        - accounts
+      summary: Update an existing account
+      operationId: updateAccount
+      parameters:
+        - name: accountId
+          in: path
+          description: Account Identifier to update
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+      responses:
+        200:
+          description: Identifier of the registered account
+          content:
+            application/json:
+              schema:
+                properties:
+                  accountId:
+                    $ref: '#/components/schemas/UUID'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The provided accountId does not exist for this ORG.ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+    get:
+      tags:
+        - accounts
+      summary: Get the list of accounts
+      responses:
+        200:
+          description: Indexed list of accounts
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/Account'
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The provided accountId does not exist for this ORG.ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - accounts
+      summary: Delete an account
+      responses:
+        200:
+          description: Account has been deleted
+          content:
+            application/json: {}
+            example: {}
+        400:
+          description: The sent request is not correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The provided accountId does not exist for this ORG.ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /cards:
+    post:
+      tags:
+        - cards
+      summary: Creates a single use virtual card from the balance
+      operationId: createCard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currency:
+                  $ref: '#/components/schemas/Currency'
+                amount:
+                  $ref: '#/components/schemas/Amount'
+                expiration:
+                  type: string
+                  format: date-time
+      responses:
+        200:
+          description: Card has been created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /cards/{cardId}:
+    delete:
+      tags:
+        - cards
+      summary: Cancels a virtual card, returning unused balance
+      operationId: cancelCard
+      parameters:
+        - name: cardId
+          in: path
+          description: Card Identifier to cancel
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: Card has been deleted
+          content:
+            application/json: {}
+            example: {}
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The provided card identifier is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: The provided card identifier is not accessible by the authenticed organization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /quotes:
+    post:
+      tags:
+        - quotes
+      summary: Request a quote for conversion between balances
+      operationId: createQuote
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Quote'
+      responses:
+        200:
+          description: Quote has been created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: The organization is not allowed to create quotes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /quotes/{quoteId}:
+    get:
+      tags:
+      - quotes
+      summary: Retrieve a quote
+      operationId: retrieveQuote
+      parameters:
+        - name: quoteId
+          in: path
+          description: Identifier of the quote to retrieve
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: Quote has been retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: The organization is not allowed to access this quotes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The quote does not exist or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /rates:
+    get:
+      tags:
+        - quotes
+      summary: Retrieve the mid-market rate for a pair of currencies
+      operationId: getRate
+      parameters:
+        - name: source
+          in: query
+          description: Source currency
+          required: true
+          schema:
+            $ref: '#/components/schemas/Currency'
+        - name: target
+          in: query
+          description: Target currency
+          required: true
+          schema:
+            $ref: '#/components/schemas/Currency'
+      responses:
+        200:
+          description: Rate has been retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rate:
+                    $ref: '#/components/schemas/Rate'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: The organization is not allowed to access rates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /tokens:
+    post:
+      tags:
+        - tokens
+      summary: Create a card token
+      operationId: postToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+      responses:
+        200:
+          description: Card Guarantee token has been created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The card guarantee was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The upstream server encounter an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /tokens/{tokenId}:
+    get:
+      tags:
+        - tokens
+      summary: Retrieve a card token guarantee
+      operationId: getToken
+      parameters:
+        - name: tokenId
+          in: path
+          description: Token Identifier
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: Card Token has been retrieved
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Token'
+                  - $ref: '#/components/schemas/TravelAccountToken'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: The organization is not allowed to access this token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The card token was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The upstream server encounter an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - tokens
+      summary: Delete a card token
+      operationId: deleteToken
+      responses:
+        200:
+          description: Card Token has been deleted
+          content:
+            application/json: {}
+            example: {}
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: The organization is not allowed to access this token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The card guarantee was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+          - bearerAuth: []
+
+  /tokens/travel-account:
+    post:
+      tags:
+        - tokens
+      summary: Create a token from the American Express travel account
+      operationId: createTravelAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TravelAccountTokenCreate'
+      responses:
+        200:
+          description: Travel Account token has been created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelAccountToken'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The card guarantee was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The upstream server encounter an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+
+  /tokens/{tokenId}/travel-components:
+    post:
+      tags:
+        - tokens
+      summary: Indicates travel components for a given token
+      operationId: createTravelComponents
+      parameters:
+        - name: tokenId
+          in: path
+          description: Token Identifier
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TravelComponents'
+      responses:
+        200:
+          description: Travel components where added to the token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TravelComponents'
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: The token identifier was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: The upstream server encounter an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+          - bearerAuth: []
+
+  /intents:
+    post:
+      tags:
+        - intents
+      summary: Create a payment Intent
+      operationId: postIntent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Intent'
+      responses:
+        200:
+          description: Payment intent has been created
+          content:
+            application/json:
+              schema:
+                properties:
+                  secureFieldTransactionId:
+                    description: The transactionId to use in Secure Fields
+                    type: string
+        400:
+          description: The parameters provided are incorrect
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: The server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        502:
+          description: An upstream server encountered an error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+          - bearerAuth: []
