@@ -1,5 +1,5 @@
 {
-  "name": "@windingtree/swagger",
+  "name": "@windingtree/glider-types",
   "version": "0.0.0-semantic-release",
   "description": "Typescript types of Glider projects",
   "publishConfig": {
