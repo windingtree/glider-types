@@ -393,6 +393,17 @@ components:
         - hotel
       example: 'hotel'
 
+    AccommodationLocation:
+      description: Location of the Accommodation
+      type: object
+      required: ['lat', 'long']
+      properties:
+        lat:
+          type: number
+        long:
+          type: number
+      example: { 'lat': 52.520008, 'long': 13.524954 }
+
     Accommodation:
       description: An accommodation object
       type: object
@@ -446,16 +457,68 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/RoomTypes'
 
-    AccommodationLocation:
-      description: Location of the Accommodation
+    WinAccommodation:
+      description: An accommodation object in Win-backend
       type: object
-      required: ['lat', 'long']
+      required:
+        [
+          'hotelId',
+          'name',
+          'type',
+          'description',
+          'location',
+          'rating',
+          'contactInformation',
+          'checkinoutPolicy',
+          'otherPolicies',
+          'media',
+          'roomTypes',
+          'id'
+        ]
       properties:
-        lat:
-          type: number
-        long:
-          type: number
-      example: { 'lat': 52.520008, 'long': 13.524954 }
+        hotelId:
+          description: Id of the hotel
+          type: string
+          example: 'GOH202'
+        name:
+          description: The name of the property or accommodation
+          type: string
+          example: Comfort Hotel Xpress Stockholm Central
+        type:
+          $ref: '#/components/schemas/AccommodationType'
+        description:
+          description: The description of the property
+          type: string
+        rating:
+          description: The award rating as per country rules
+          type: integer
+          example: 3
+        contactInformation:
+          $ref: '#/components/schemas/ContactInformation'
+        checkinoutPolicy:
+          $ref: '#/components/schemas/CheckInOutPolicy'
+        otherPolicies:
+          type: array
+          items:
+            type: string
+        media:
+          $ref: '#/components/schemas/Media'
+        roomTypes:
+          description: Type of rooms available for this accommodation
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/RoomTypes'
+        _id:
+              description: mongo id of the hotel
+              type: string
+        id:
+          description: uuid of the hotel (offer)
+          type: string
+        location:
+          $ref: '#/components/schemas/MongoLocation'
+        provider:
+          description: provider id
+          type: string
 
     RoomTypes:
       description: A room type object
@@ -1552,27 +1615,6 @@ components:
           type: array
           items:
             type: number
-
-    WinAccommodation:
-      description: An accommodation object
-      allOf:
-        - $ref: '#/components/schemas/Accommodation'
-        - type: object
-          required:
-            - id
-            - location
-          properties:
-            _id:
-              description: mongo id of the hotel
-              type: string
-            id:
-              description: uuid of the hotel (offer)
-              type: string
-            location:
-              $ref: '#/components/schemas/MongoLocation'
-            provider:
-              description: provider id
-              type: string
 
     SetPassengersResponse:
       description: error response;
