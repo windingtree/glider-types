@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: The Accommodations
-  description: 'This is the interface documentation for the RESTful API interface for the set of Windingtree Accommodations Proxy servers'
+  description: This is the interface documentation for the RESTful API interface for the set of Windingtree Accommodations Proxy servers
   contact:
     email: dev@windingtree.com
   license:
