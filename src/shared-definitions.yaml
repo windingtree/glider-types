@@ -1541,18 +1541,18 @@ components:
 
     WinAccommodation:
       description: An accommodation object
-      type: object
-      allOff:
-        $ref: '#/components/schemas/Accommodation'
-      required:
-        - id
-      properties:
-        _id:
-          description: mongo id of the hotel
-          type: string
-        id:
-          description: uuid of the hotel (offer)
-          type: string
+      allOf:
+        - $ref: '#/components/schemas/Accommodation'
+        - type: object
+          required:
+            - id
+          properties:
+            _id:
+              description: mongo id of the hotel
+              type: string
+            id:
+              description: uuid of the hotel (offer)
+              type: string
 
     SetPassengersResponse:
       description: error response;
@@ -1939,3 +1939,32 @@ components:
             minimum: 2
             maximum: 12
 
+    SearchResults:
+      description: An object to return search results
+      type: object
+      nullable: true
+      required:
+        - offers
+        - accommodations
+      properties:
+        offers:
+          description: The indexed list of offers
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Offer'
+        accommodations:
+          description: The accommodations matching an search request
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Accommodation'
+        pricePlans:
+          description: The indexed list of price plans
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PricePlan'
+        passengers:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Guest'
+          example:
+            PAX1: { 'type': 'ADT' }

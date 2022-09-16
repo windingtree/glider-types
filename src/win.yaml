@@ -737,7 +737,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PricedOffer'
+                $ref: '#/components/schemas/WinPricedOffer'
         400:
           description: Handled Error
           content:
@@ -782,7 +782,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PricedOffer'
+                $ref: '#/components/schemas/WinPricedOffer'
         400:
           description: Handled Error
           content:
