@@ -1,0 +1,1084 @@
+openapi: 3.0.3
+
+info:
+  title: Win-backend server
+  description: This is the interface documentation for the RESTful API interface for backend services of Win.so
+  version: 0.0.1
+
+servers:
+  - url: http://localhost:5000/api
+    description: Win-backend Local Testing server
+  - url: https://test-win-backend-api.win.so/api
+    description: Win-backend Staging server
+
+tags:
+  - name: auth
+    description: Auth service
+  - name: offers
+    description: Operations with Offers
+  - name: booking
+    description: Booking flow
+  - name: service
+    description: Service functions
+
+paths:
+  /user/login:
+    post:
+      summary: get access token
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - login
+                - password
+              properties:
+                login:
+                  type: string
+                  description: user's login
+                password:
+                  type: string
+                  description: user's password
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - login
+                  - roles
+                  - accessToken
+                  - refreshToken
+                properties:
+                  id:
+                    type: string
+                  login:
+                    type: string
+                  roles:
+                    type: array
+                    items:
+                      type: string
+                    minItems: 1
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+          description: It's ok
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/refresh:
+    post:
+      summary: refresh access token
+      tags: [auth]
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - accessToken
+                  - refreshToken
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/get-all:
+    get:
+      summary: get all users
+      tags: [auth]
+      responses:
+        200:
+          description: get all users
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - users
+                properties:
+                  users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        login:
+                          type: string
+                        roles:
+                          type: array
+                          items:
+                            type: string
+                          minItems: 1
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/create:
+    post:
+      security:
+        - bearerAuth: []
+      summary: create a new user (only for manager role)
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - login
+                - password
+                - roles
+              properties:
+                login:
+                  type: string
+                  description: user's login
+                password:
+                  type: string
+                  description: user's password
+                roles:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum: [manager, staff]
+                  description: roles (staff, manager)
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/update-password:
+    put:
+      security:
+        - bearerAuth: []
+      summary: update password
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - password
+              properties:
+                userId:
+                  type: string
+                  description: user's id
+                password:
+                  type: string
+                  description: new user password
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/update-roles:
+    put:
+      security:
+        - bearerAuth: []
+      summary: update role (only for manager role)
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - roles
+              properties:
+                userId:
+                  type: string
+                  description: user's id
+                roles:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum: [manager, staff]
+                  description: roles (staff, manager)
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user:
+    delete:
+      security:
+        - bearerAuth: []
+      summary: delete user (only for manager role)
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+              properties:
+                userId:
+                  type: string
+                  description: user's id
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/logout:
+    post:
+      security:
+        - bearerAuth: []
+      summary: logout
+      tags: [auth]
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings/auth/secret:
+    get:
+      summary: get secret
+      tags: [auth]
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingsAuthSecretResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings/auth:
+    post:
+      summary: auth
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingsAuthRequest'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingsAuthResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bookings/auth/refresh:
+    post:
+      summary: refresh
+      tags: [auth]
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingsAuthResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /session:
+    get:
+      summary: get session token
+      tags: [auth]
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /hotels/offers/search:
+    post:
+      tags: [offers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OffersSearchRequest'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /hotels/offers/{offerId}/price:
+    post:
+      tags: [offers]
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WinPricedOffer'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [offers]
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WinPricedOffer'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /hotels/{accommodationId}:
+    get:
+      tags: [offers]
+      parameters:
+        - in: path
+          name: accommodationId
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /booking/{address}:
+    get:
+      tags: [booking]
+      parameters:
+        - in: path
+          name: address
+          required: true
+          schema:
+            $ref: '#/components/schemas/Address'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /booking/{offerId}/guests:
+    parameters:
+      - in: path
+        name: offerId
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+    post:
+      tags: [booking]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Guest'
+              minItems: 1
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetPassengersResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /booking/{offerId}/rewardOptions:
+    parameters:
+      - in: path
+        name: offerId
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+    get:
+      tags: [booking]
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RewardOption'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /booking/{offerId}/reward:
+    parameters:
+      - in: path
+        name: offerId
+        required: true
+        schema:
+          $ref: '#/components/schemas/UUID'
+    post:
+      tags: [booking]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RewardChoice'
+
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /health:
+    get:
+      tags: [service]
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  commit:
+                    type: string

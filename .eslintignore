@@ -1,0 +1,7 @@
+build
+dist
+node_modules
+package.json
+docs
+pages
+src/ui

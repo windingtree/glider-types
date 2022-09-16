@@ -1,0 +1,1970 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      description: Objet describing an error
+      type: object
+      required: ['message']
+      properties:
+        message:
+          description: Error message
+          type: string
+          example: 'Something went wrong'
+        code:
+          description: Error code
+          type: string
+          pattern: '^[0-9A-Z]+$'
+          example: 'E01'
+
+    UUID:
+      description: Unique identifier for Offers and Orders
+      type: string
+      format: uuid
+      minLength: 36
+      maxLength: 36
+      pattern: '^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$'
+      example: '2be512eb-288c-4ce4-a3eb-674579930122'
+
+    Amount:
+      description: A monetary amount in a given currency
+      type: string
+      pattern: '^[0-9]+(\.[0-9]+){0,1}$'
+      minLength: 1
+      maxLength: 99
+      example: '40.00'
+
+    Currency:
+      description: The ISO4217 currency code
+      type: string
+      pattern: '^[A-Z]{3}$'
+      minLength: 3
+      maxLength: 3
+      example: 'EUR'
+
+    Price:
+      description: Price of the service
+      type: object
+      required: ['currency', 'public']
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        private:
+          description: The private price in currency decimals for this service that the distributor owes to the supplier
+          $ref: '#/components/schemas/Amount'
+        public:
+          description: The public price for this service. The distributor should sell the product at this price.
+          $ref: '#/components/schemas/Amount'
+        commission:
+          description: The distributor commission for selling this service
+          $ref: '#/components/schemas/Amount'
+        taxes:
+          description: The taxes to be collected when selling this service.
+          $ref: '#/components/schemas/Amount'
+        isAmountBeforeTax:
+          type: boolean
+        decimalPlaces:
+          type: integer
+
+    ServiceRestrictions:
+      description: Service restrictions
+      type: object
+      required: ['refundable', 'exchangeable']
+      properties:
+        refundable:
+          description: Is the service refundable?
+          type: boolean
+          example: false
+        exchangeable:
+          description: Is the service exchangeable?
+          type: boolean
+          example: false
+        refundFee:
+          # The fee charged in case a refund is requested
+          $ref: '#/components/schemas/Amount'
+        exchangeFee:
+          # The fee charged in case an exchange is requested
+          $ref: '#/components/schemas/Amount'
+
+    Email:
+      description: An email
+      type: string
+      pattern: '^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-_0-9]+\.)+[a-zA-Z]{2,}))$'
+      example: contact@org.co.uk
+
+    PhoneNumber:
+      description: A phone number
+      type: string
+      pattern: '^([+]{0,1})([0-9- ()/]+)$'
+      example: '+32123456789'
+
+    Name:
+      description: First, middle or last name
+      type: string
+      minLength: 1
+      maxLength: 42
+      example: 'Bob'
+
+    PassengerType:
+      description: Type of a passenger
+      type: string
+      minLength: 3
+      maxLength: 3
+      enum:
+        - ADT # Adult (12+y)
+        - CHD # Child (2-11y)
+        - INF # Infant without a seat (<2y)
+      example: ADT
+
+    Expiration:
+      description: The offer expiration time
+      type: string
+      format: date-time
+      example: '2021-04-12T23:20:50.52Z'
+
+    RoomAmenities:
+      description: The list of amenities available with this room type
+      type: object
+      required: ['name', 'description', 'otaCode']
+      properties:
+        name:
+          description: The name of this amenity
+          type: string
+        description:
+          description: Description of the amenity
+          type: string
+        otaCode:
+          description: The OTA code for this amenity
+          type: string
+
+    RoomOccupancy:
+      description: Maximum occupancy for this room type
+      type: object
+      required: ['adults', 'children']
+      properties:
+        adults:
+          type: integer
+        children:
+          type: integer
+
+    RoomSize:
+      description: the size of the room
+      type: object
+      properties:
+        value:
+          description: The size value of this room
+          type: number
+          example: 15
+        unit:
+          description: The unit for this room size
+          type: string
+          enum:
+            - metric
+            - imperial
+          example: metric
+          default: metric
+
+    RoomPolicies:
+      type: object
+      additionalProperties:
+        type: string
+
+    Address:
+      description: Address of a hotel
+      type: object
+      required: ['country', 'streetAddress', 'locality']
+      properties:
+        streetAddress:
+          description: address line
+          type: string
+          example: Maskingatan 11
+        premise:
+          type: string
+          example: Gota Alv River
+        locality:
+          description: city name
+          type: string
+          example: Gothenburg
+        postalCode:
+          description: postal code
+          type: string
+          example: 417 64
+        country:
+          description: country
+          type: string
+          example: 'China'
+
+    PassengerSearch:
+      description: A representation of a passenger
+      type: object
+      required: ['type', 'count']
+      properties:
+        type:
+          $ref: '#/components/schemas/PassengerType'
+        count:
+          description: Number of associated passengers of the same type
+          type: integer
+          example: 2
+          default: 1
+        childrenAges:
+          description: Array containing the ages of the children. Mandatory if PTC is INF or CHD.
+          type: array
+          items:
+            type: number
+      example: { 'type': 'ADT', 'count': 1 }
+
+    PassengerBooking:
+      description: A representation of a passenger
+      type: object
+      required: ['type', 'lastnames', 'firstnames']
+      properties:
+        type:
+          $ref: '#/components/schemas/PassengerType'
+        count:
+          description: Number of associated passengers of the same type
+          type: integer
+          example: 2
+          default: 1
+        civility:
+          description: The civility of the passenger
+          type: string
+          enum:
+            - MR
+            - MRS
+          example: 'MR'
+        lastnames:
+          description: The list of last names of this passenger
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/Name'
+        firstnames:
+          description: The list of first names of this passenger
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/Name'
+        middlenames:
+          description: The list of middle names of this passenger
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/Name'
+        gender:
+          description: The gender of the passenger
+          type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+        birthdate:
+          description: The birthdate of the passenger
+          type: string
+          format: date
+          example: '1980-03-21'
+        contactInformation:
+          description: The contact information of the passenger
+          type: array
+          minItems: 1
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/PhoneNumber'
+              - $ref: '#/components/schemas/Email'
+      example:
+        {
+          'type': 'ADT',
+          'lastnames': ['Marley'],
+          'firstnames': ['Bob'],
+          'gender': 'Male',
+          'birthdate': '1980-03-21',
+          'contactInformation': ['+32123456789', 'contact@org.co.uk']
+        }
+
+    LocationSearch:
+      description: The location of a specific place
+      type: object
+      properties:
+        rectangle:
+          $ref: '#/components/schemas/LocationRectangle'
+        circle:
+          $ref: '#/components/schemas/LocationCircle'
+
+    LocationRectangle:
+      description: The coordinates of a rectangle area
+      type: object
+      required: ['south', 'west', 'east', 'north']
+      properties:
+        south:
+          type: number
+        west:
+          type: number
+        north:
+          type: number
+        east:
+          type: number
+      example:
+        {
+          'south': 50.0929802,
+          'west': 14.4012451,
+          'north': 50.0812615,
+          'east': 14.4394467
+        }
+
+    LocationCircle:
+      description: The coordinates of a circle
+      type: object
+      required: ['lat', 'long', 'radius']
+      properties:
+        lat:
+          type: number
+        long:
+          type: number
+        radius:
+          type: number
+      example: { 'lat': 50.0929802, 'long': 14.4012451, 'radius': 100 }
+
+    MediaItem:
+      description: Photo or Image
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - photo
+            - video
+        width:
+          type: integer
+        height:
+          type: integer
+        url:
+          type: string
+          format: url
+
+    Media:
+      type: array
+      nullable: true
+      items:
+        $ref: '#/components/schemas/MediaItem'
+
+    Disclosure:
+      description: DIsclosure information
+      type: array
+      items:
+        type: string
+      example: 'The seat charge is applicable to each one-way flight...'
+
+    # @todo Review this definition is it still required
+    PricePlan:
+      description: Describes the attributes of the price plan
+      type: object
+      properties:
+        name:
+          description: The marketing name of this price plan
+          type: string
+          maxLength: 24
+          example: 'Premium Economy'
+        amenities:
+          description: The amenities for this price plan
+          type: array
+          maxItems: 99
+          items:
+            type: string
+            example: meal
+        checkedBaggages:
+          description: the list of checked checkedBaggages
+          type: object
+          properties:
+            quantity:
+              type: integer
+              example: 2
+
+    AccommodationType:
+      description: Type of accommodation service
+      type: string
+      maxLength: 24
+      enum:
+        - hotel
+      example: 'hotel'
+
+    Accommodation:
+      description: An accommodation object
+      type: object
+      required:
+        [
+          'hotelId',
+          'name',
+          'type',
+          'description',
+          'location',
+          'rating',
+          'contactInformation',
+          'checkinoutPolicy',
+          'otherPolicies',
+          'media',
+          'roomTypes'
+        ]
+      properties:
+        hotelId:
+          description: Id of the hotel
+          type: string
+          example: 'GOH202'
+        name:
+          description: The name of the property or accommodation
+          type: string
+          example: Comfort Hotel Xpress Stockholm Central
+        type:
+          $ref: '#/components/schemas/AccommodationType'
+        description:
+          description: The description of the property
+          type: string
+        location:
+          $ref: '#/components/schemas/AccommodationLocation'
+        rating:
+          description: The award rating as per country rules
+          type: integer
+          example: 3
+        contactInformation:
+          $ref: '#/components/schemas/ContactInformation'
+        checkinoutPolicy:
+          $ref: '#/components/schemas/CheckInOutPolicy'
+        otherPolicies:
+          type: array
+          items:
+            type: string
+        media:
+          $ref: '#/components/schemas/Media'
+        roomTypes:
+          description: Type of rooms available for this accommodation
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/RoomTypes'
+
+    AccommodationLocation:
+      description: Location of the Accommodation
+      type: object
+      required: ['lat', 'long']
+      properties:
+        lat:
+          type: number
+        long:
+          type: number
+      example: { 'lat': 52.520008, 'long': 13.524954 }
+
+    RoomTypes:
+      description: A room type object
+      type: object
+      required:
+        [
+          'name',
+          'description',
+          'amenities',
+          'size',
+          'maximumOccupancy',
+          'media',
+          'policies'
+        ]
+      properties:
+        name:
+          description: The name of this room type
+          type: string
+          example: Twin beds
+        description:
+          description: A description of the room type
+          type: string
+          example: Standard twin rooms with two single beds
+        amenities:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoomAmenities'
+        size:
+          $ref: '#/components/schemas/RoomSize'
+          nullable: true
+        maximumOccupancy:
+          $ref: '#/components/schemas/RoomOccupancy'
+        media:
+          $ref: '#/components/schemas/Media'
+          nullable: true
+        policies:
+          $ref: '#/components/schemas/RoomPolicies'
+
+    ContactInformation:
+      description: Contact information of a hotel
+      type: object
+      required: ['address', 'phoneNumbers', 'emails']
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        phoneNumbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/PhoneNumber'
+        emails:
+          type: array
+          items:
+            $ref: '#/components/schemas/Email'
+
+    CheckInOutPolicy:
+      description: The check-in and check-out time policy, format HH:MM
+      type: object
+      required: ['checkinTime', 'checkoutTime']
+      properties:
+        checkinTime:
+          type: string
+          pattern: '^[0-9]{2}:[0-9]{2}$'
+          example: '15:00'
+        checkoutTime:
+          type: string
+          pattern: '^[0-9]{2}:[0-9]{2}$'
+          example: '11:00'
+
+    TaxItem:
+      description: A tax item
+      type: object
+      required: ['description', 'amount', 'code']
+      properties:
+        description:
+          type: string
+          example: Air Travelers Security Charge (ATSC)
+        amount:
+          $ref: '#/components/schemas/Amount'
+        code:
+          type: string
+          pattern: '^[A-Z0-9]{2}$'
+          example: CA
+
+    Offer:
+      description: An offer object
+      type: object
+      required: ['expiration', 'price', 'pricePlansReferences']
+      properties:
+        expiration:
+          $ref: '#/components/schemas/Expiration'
+        price:
+          $ref: '#/components/schemas/Price'
+        pricePlansReferences:
+          $ref: '#/components/schemas/PricePlansReferences'
+
+    OfferPriced:
+      type: object
+      required: ['expiration', 'price', 'pricedItems', 'disclosures']
+      properties:
+        expiration:
+          $ref: '#/components/schemas/Expiration'
+        price:
+          $ref: '#/components/schemas/Price'
+        pricedItems:
+          description: Breakdown of items priced
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceItem'
+        disclosures:
+          description: List of disclosures
+          type: array
+          items:
+            $ref: '#/components/schemas/Disclosure'
+
+    PriceItem:
+      description: Detail of a priced item
+      type: object
+      required: ['fare', 'taxes']
+      properties:
+        fare:
+          description: Breakdown of the fare
+          type: array
+          items:
+            $ref: '#/components/schemas/FareItem'
+        taxes:
+          description: Taxes included in the price
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxItem'
+
+    FareItem:
+      description: A fare item
+      type: object
+      required: ['description', 'amount', 'usage']
+      properties:
+        description:
+          type: string
+          example: Navigation Surcharge
+        amount:
+          $ref: '#/components/schemas/Amount'
+        usage:
+          description: The usage of the fare item
+          type: string
+          enum:
+            - base # Base Fare
+            - surcharge # Surcharge
+          default: base
+        code:
+          description: The optional code of the fare item
+          type: string
+          pattern: '^[A-Z0-9]{2}$'
+          example: S1
+        components:
+          description: A fare component
+          type: array
+          items:
+            $ref: '#/components/schemas/FareComponentItem'
+
+    FareComponentItem:
+      type: object
+      required: ['name', 'basisCode', 'designator', 'conditions']
+      properties:
+        name:
+          description: The name of the fare component
+          type: string
+          example: Basic
+        basisCode:
+          description: The Fare Basis code of the fare component
+          type: string
+          pattern: '^[A-Z0-9]+$'
+          example: A30ZABA
+        designator:
+          description: The Reservation Booking Designator (RBD)
+          type: string
+          pattern: '^[A-Z]{1}$'
+          example: A
+        conditions:
+          description: The fare conditions associated with the fare component
+          type: string
+          example: 'No flight changes are permitted.'
+
+    PricePlansReferences:
+      description: Maps a price plan with the associated elements
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/AdditionalPricePlanProperties'
+      example:
+        {
+          '7b7b18e2-7357-4e98-9be6-aa182e0b090a':
+            { 'accommodation': 'prov.1234', 'roomType': 'ND' }
+        }
+
+    AdditionalPricePlanProperties:
+      type: object
+      required: ['accommodation', 'roomType']
+      properties:
+        accommodation:
+          description: reference of the accommodation
+          type: string
+          example: 'prov.1234'
+        roomType:
+          description: reference of the room type in the accommodation
+          type: string
+          example: 'ND'
+        roomTypePlan:
+          $ref: '#/components/schemas/RoomTypePlan'
+
+    RoomTypePlan:
+      type: object
+      required: ['roomTypeId']
+      properties:
+        mealPlan:
+          type: string
+        ratePlan:
+          type: string
+        roomTypeId:
+          type: string
+      example: { 'mealPlan': 'BB', 'ratePlan': 'BAR', 'roomTypeId': 'FM4' }
+
+    Order:
+      description: An Order object
+      type: object
+      required: ['supplierReservationId', 'status']
+      properties:
+        supplierReservationId:
+          description: Hotel reservation ID that should be presented to the client or at reception desk
+          type: string
+        restrictions:
+          $ref: '#/components/schemas/ServiceRestrictions'
+        status:
+          description: Status of an order
+          type: string
+
+    SearchCriteria:
+      description: An object to provide search criteria
+      type: object
+      required: ['accommodation', 'passengers']
+      properties:
+        accommodation:
+          $ref: '#/components/schemas/AccommodationCriteria'
+        passengers:
+          description: The passengers involved in the search. Allows personalization and custom offers.
+          type: array
+          minItems: 1
+          maxItems: 99
+          items:
+            $ref: '#/components/schemas/PassengerSearch'
+
+    AccommodationCriteria:
+      description: Criteria for the accommodation search
+      type: object
+      required: ['location', 'arrival', 'departure']
+      properties:
+        location:
+          $ref: '#/components/schemas/LocationSearch'
+        arrival:
+          type: string
+          description: arrival day in the accommodation
+          format: date-time
+        departure:
+          type: string
+          description: departure day from the accommodation
+          format: date-time
+        roomCount:
+          type: number
+          description: number of rooms searched
+
+    CreateOfferRequest:
+      description: An object to provide order details
+      type: object
+      required: ['offerId', 'passengers', 'guaranteeId']
+      properties:
+        offerId:
+          $ref: '#/components/schemas/UUID'
+        passengers:
+          description: Indexed dictionary of the passengers
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PassengerBooking'
+        guaranteeId:
+          $ref: '#/components/schemas/UUID'
+
+    OrderCancellationRequest:
+      description: Cancellation of the order
+      type: object
+      required: ['orderId']
+      properties:
+        orderId:
+          $ref: '#/components/schemas/UUID'
+
+    SearchResponse:
+      description: An object to return search results
+      type: object
+      required: ['offers', 'accommodations']
+      properties:
+        offers:
+          description: The indexed list of offers
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Offer'
+        accommodations:
+          description: The accommodations matching an search request
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Accommodation'
+        pricePlans:
+          description: The indexed list of price plans
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PricePlan'
+        passengers:
+          description: The mapping of the passenger references
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PassengerSearch'
+
+    PricedOfferResponse:
+      description: An offer with confirmed price
+      type: object
+      required: ['offerId', 'offer']
+      properties:
+        offerId:
+          $ref: '#/components/schemas/UUID'
+        offer:
+          $ref: '#/components/schemas/OfferPriced'
+
+    CreateWithOfferResponse:
+      description: An order
+      type: object
+      required: ['orderId', 'order']
+      properties:
+        orderId:
+          description: The ID of the order Created
+          anyOf:
+            - $ref: '#/components/schemas/UUID'
+        order:
+          description: The created order
+          anyOf:
+            - $ref: '#/components/schemas/Order'
+
+    OrderCancellationResponse:
+      description: Confirmation of an order cancellation
+      type: object
+      required: ['orderId', 'status']
+      properties:
+        orderId:
+          description: Order ID
+          allOf:
+            - $ref: '#/components/schemas/UUID'
+        status:
+          description: Result of cancellation
+          type: string
+      example:
+        { 'orderId': '11111111-2222-3333-4444-000000000001', 'status': 'CANCELLED' }
+
+    Iban:
+      description: The International Bank Account Number
+      type: string
+      pattern: "^[A-Z]{2}[A-Z0-9]+$"
+      example: "CH9300762011623852957"
+
+    Bic:
+      description: The Swift/BIC Code as per ISO 9362
+      type: string
+      pattern: "^[A-Z0-9]{8-11}$"
+      example: "CRESCHZZXXX"
+
+    Account:
+      description: The reference of an account
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        iban:
+          $ref: '#/components/schemas/Iban'
+
+    Rate:
+      description: A conversion rate between currencies
+      type: string
+      pattern: "^[0-9]+(.[0-9]+)?$"
+      example: "0.0985"
+
+    # @todo Fix the ORGiD format according to v2
+    OrgId:
+      description: ORG.ID contract address identifier
+      type: string
+      pattern: '^0x[0-9a-f]{40}$'
+      minLength: 42
+      maxLength: 42
+      example: '0xc0fbc1348b43d50c948edf1818b0abfdd7466b9e'
+
+    Guarantee:
+      description: A guarantee made by a distributor to a supplier
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        creditorOrgId:
+          $ref: '#/components/schemas/OrgId'
+        debtorOrgId:
+          $ref: '#/components/schemas/OrgId'
+        expiration:
+          type: string
+          format: date-time
+
+    Deposit:
+      description: A deposit made by a participant to Simard Pay
+      type: object
+      properties:
+        instrument:
+          description: "Indicates the instrument used as a funding mechanism"
+          type: string
+          enum:
+          - blockchain
+        chain:
+          description: "For blockchain funding source, indicates the chain"
+          type: string
+          enum:
+          - ethereum
+        transactionHash:
+          description: "For blockchain funding source, indicates the transaction hash"
+          type: string
+          pattern: '^0x[0-9a-f]{64}$'
+          example: 0xae7ec88780eb946528a3e443373de4c5f82d5311cef0788c72b835b52048b8b3
+        quoteId:
+          $ref: '#/components/schemas/UUID'
+
+    Quote:
+      description: A quote for exchange between currencies
+      type: object
+      properties:
+        quoteId:
+          description: Identifier of a quote
+          type: string
+          format: uuid
+        sourceCurrency:
+          $ref: '#/components/schemas/Currency'
+        sourceAmount:
+          $ref: '#/components/schemas/Amount'
+        targetCurrency:
+          $ref: '#/components/schemas/Currency'
+        targetAmount:
+          $ref: '#/components/schemas/Amount'
+        rate:
+          $ref: '#/components/schemas/Rate'
+
+    Card:
+      description: A payment card
+      type: object
+      properties:
+        id:
+          description: Identifier of a card
+          type: string
+          format: uuid
+        brand:
+          description: The brand of the card
+          type: string
+          enum:
+          - visa
+          - mastercard
+          - amex
+          - bancontact
+          - diners
+          - discover
+          - jcb
+          - maestro
+          - uatp
+          - unionpay
+          - electron
+        accountNumber:
+          description: The account number of the card
+          type: string
+          pattern: '^[0-9]{13,19]$'
+          example: '4444333322221111'
+        expiryMonth:
+          description: The month of the card expiration
+          type: string
+          pattern: '^[0-9]{2}$'
+          example: '04'
+        expiryYear:
+          description: The year of the card expiration
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: '2021'
+        cvv:
+          description: The Card Verification Value of the card
+          type: string
+          pattern: '^[0-9]{3,4}$'
+          example: '123'
+        type:
+          description: Type of the card
+          type: string
+          enum:
+          - debit
+          - credit
+          - prepaid
+
+    Token:
+      description: A tokenized payment card
+      type: object
+      properties:
+        id:
+          description: Identifier of a card token
+          type: string
+          format: uuid
+        creatorOrgId:
+          $ref: '#/components/schemas/OrgId'
+        receiverOrgId:
+          $ref: '#/components/schemas/OrgId'
+        brand:
+          description: The brand of the card
+          type: string
+          enum:
+          - visa
+          - mastercard
+          - amex
+          - bancontact
+          - diners
+          - discover
+          - jcb
+          - maestro
+          - uatp
+          - unionpay
+          - electron
+        aliasAccountNumber:
+          description: The alias account number of the card
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'AAABcHxr-sDssdexyrAAAfyXWIgaAF40'
+        maskedAccountNumber:
+          description: The masked account number of the card
+          type: string
+          pattern: '^[0-9]{6}X+[0-9]{4}$'
+          example: '444433XXXXXX1111'
+        expiryMonth:
+          description: The month of the card expiration
+          type: string
+          pattern: '^[0-9]{2}$'
+          example: '04'
+        expiryYear:
+          description: The year of the card expiration
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: '2021'
+        aliasCvv:
+          description: The alias Card Verification Value of the card
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'mVHJkLRrRX-vb9uUzEM40RUN'
+        type:
+          description: Type of the card
+          type: string
+          enum:
+          - debit
+          - credit
+        billingAddress:
+          $ref: '#/components/schemas/BillingAddress'
+        3ds:
+          $ref: '#/components/schemas/3DS'
+
+    TravelAccountToken:
+      description: A tokenized payment card with amex
+      type: object
+      properties:
+        id:
+          description: Identifier of a card token
+          type: string
+          format: uuid
+        creatorOrgId:
+          $ref: '#/components/schemas/OrgId'
+        receiverOrgId:
+          $ref: '#/components/schemas/OrgId'
+        brand:
+          description: The brand of the card
+          type: string
+          example: 'amex'
+        aliasAccountNumber:
+          description: The alias account number of the card
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'AAABcHxr-sDssdexyrAAAfyXWIgaAF40'
+        maskedAccountNumber:
+          description: The masked account number of the card
+          type: string
+          pattern: '^[0-9]{6}X+[0-9]{4}$'
+          example: '444433XXXXXX1111'
+        expiryMonth:
+          description: The month of the card expiration
+          type: string
+          pattern: '^[0-9]{2}$'
+          example: '04'
+        expiryYear:
+          description: The year of the card expiration
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: '2021'
+        aliasCvv:
+          description: The alias Card Verification Value of the card
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'mVHJkLRrRX-vb9uUzEM40RUN'
+        type:
+          description: Type of the card
+          type: string
+          example: 'debit'
+        amount:
+          description: Token Amount
+          type: string
+          example: '125.50'
+        currency:
+          description: Token currency
+          type: string
+          example: 'EUR'
+        billingAddress:
+          $ref: '#/components/schemas/BillingAddress'
+
+    BillingAddress:
+      description: The billing address of a card
+      type: object
+      properties:
+        countryCode:
+          description: The 2-letters ISO country code
+          type: string
+          pattern: '^[A-Z]{2}$'
+          example: 'US'
+        stateProv:
+          description: The state or province code (country specific)
+          type: string
+          pattern: '^[A-Z]+$'
+          example: 'FL'
+        postalCode:
+          description: The postal or zip code
+          type: string
+          pattern: '^[-A-Z0-9 ]+$'
+          example: '10114'
+        cityName:
+          description: The name of the city
+          type: string
+          pattern: '^[-A-Z0-9 \'']+$'
+          example: 'MIAMI'
+        street:
+          description: The street address
+          type: string
+          pattern: '^[-A-Z0-9 \'']+$'
+          example: '1 CIRCLE ROAD'
+
+    TokenCreate:
+      description: Parameters required to create a token
+      type: object
+      properties:
+        receiverOrgId:
+          $ref: '#/components/schemas/OrgId'
+        secureFieldTransactionId:
+          description: Transaction Identifier returned by the Secure Field
+          type: string
+          pattern: '^[0-9]+$'
+        expiryMonth:
+          description: The month of the card expiration
+          type: string
+          pattern: '^[0-9]{2}$'
+          example: '04'
+        expiryYear:
+          description: The year of the card expiration
+          type: string
+          pattern: '^[0-9]{4}$'
+          example: '2021'
+        billingAddress:
+          description: The billing address of the card
+          type: object
+          properties:
+            countryCode:
+              description: The 2-letters ISO country code
+              type: string
+              pattern: '^[A-Z]{2}$'
+              example: 'US'
+            stateProv:
+              description: The state or province code (country specific)
+              type: string
+              pattern: '^[A-Z]+$'
+              example: 'FL'
+            postalCode:
+              description: The postal or zip code
+              type: string
+              pattern: '^[-A-Z0-9 ]+$'
+              example: '10114'
+            cityName:
+              description: The name of the city
+              type: string
+              pattern: '^[-A-Z0-9 \'']+$'
+              example: 'MIAMI'
+            street:
+              description: The street address
+              type: string
+              pattern: '^[-A-Z0-9 \'']+$'
+              example: '1 CIRCLE ROAD'
+
+    TravelAccountTokenCreate:
+      description: Parameters required to create a travel account token
+      type: object
+      properties:
+        currency:
+          $ref: '#/components/schemas/Currency'
+        amount:
+          $ref: '#/components/schemas/Amount'
+        receiverOrgId:
+          $ref: '#/components/schemas/OrgId'
+        customerReferences:
+          $ref: '#/components/schemas/TravelAccountCustomerReferences'
+
+    TravelAccountCustomerReferences:
+      description: Properties to enable corporate accounting reconciliation
+      type: object
+      properties:
+        costCenter:
+          description: The cost center to expense this trip
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'ABCDE-4'
+        businessUnit:
+          description: The business unit to expense for this trip
+          type: string
+          pattern: '^[- A-Zz-z0-9]+$'
+          example: 'ABCDE-4'
+        projectCode:
+          description: The project code
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'ABCDE-4'
+        jobNumber:
+          description: The job number
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'ABCDE-4'
+        employeeId:
+          description: An employee unique identifier
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'ABCDE-4'
+        travellerType:
+          description: The type of traveller
+          type: string
+          pattern: '^[-A-Za-z0-9]+$'
+          example: 'ABCDE-4'
+        travellerLastName:
+          description: The last name of the main traveller for this trip
+          type: string
+          pattern: '^[- A-Za-z]+$'
+          example: 'ABCDE-4'
+        travellerFirstName:
+          description: The first name of the main traveller for this trip
+          type: string
+          pattern: '^[- A-Za-z]+$'
+          example: 'ABCDE-4'
+        approverLastName:
+          description: The last name of the approver for this trip
+          type: string
+          pattern: '^[- A-Za-z]+$'
+          example: 'ABCDE-4'
+        approverFirstName:
+          description: The first name of the approver for this trip
+          type: string
+          pattern: '^[- A-Za-z]+$'
+          example: 'ABCDE-4'
+
+    TravelComponentAmounts:
+      description: Contains the costing breakdown for a travel component
+      type: object
+      properties:
+        total:
+          description: Total amount for this travel component (including taxes)
+          $ref: '#/components/schemas/Amount'
+        base:
+          description: Base amount for this travel component (exluding taxes)
+          $ref: '#/components/schemas/Amount'
+        taxes:
+          description: List of the tax items
+          type: array
+          items:
+            type: object
+            properties:
+              amount:
+                description: Amount of the tax item in token currency
+                $ref: '#/components/schemas/Amount'
+              percentageRate:
+                description: Percentage of the rate - 19.5 for 19.5%
+                $ref: '#/components/schemas/Amount'
+              iataCode:
+                description: IATA Tax Code of the tax item (for air only)
+                type: string
+                pattern: '^[0-9AZ]{2}$'
+                example: 'YQ'
+              taxId:
+                description: Tax code to identify the type of tax (for non-air)
+                type: string
+                enum:
+                  - value_added         # VAT
+                  - goods_and_services  # GST
+                  - provincial_sales    # PST
+                  - quebec_sales        # QST
+              countryCode:
+                description: ISO3166-1 country code collecting the tax (when applicable)
+                type: string
+                pattern: '^[AZ]{2}$'
+                example: 'US'
+
+    TravelComponentAir:
+      description: A air component of a trip
+      type: object
+      properties:
+        componentType:
+            description: A fixed value to identify Air components
+            type: string
+            enum:
+              - air
+        amounts:
+          $ref: '#/components/schemas/TravelComponentAmounts'
+        recordLocator:
+          description: The PNR Record Locator
+          type: string
+          pattern: '^[0-9AZ]{6}$'
+          example: 'ZU7CKB'
+        documentType:
+          description: The type of electronic document
+          type: string
+          enum:
+            - TKT
+            - EMD
+          example: 'TKT'
+        documentNumber:
+          description: The electronic document number
+          type: string
+          pattern: '^[0-9]{14}$'
+          example: '15147568054247'
+        documentIssuanceDate:
+          description: The date of issuance of the document, using the format YYYY-MM-DD
+          type: string
+          format: date
+          example: '2021-12-01'
+        segments:
+          description: The list of segments for this trip
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              iataCode:
+                description: 2-letters IATA code of the marketing airline
+                type: string
+                pattern: '[A-Z0-9]{2}'
+                example: BA
+              flightNumber:
+                description: 4 digits flight number of the marketing airline
+                type: string
+                pattern: '[0-9]{4}'
+                example: '1234'
+              serviceClass:
+                description: Class of service for this segment
+                type: string
+                pattern: '[A-Z]{1,2}'
+                example: C
+              origin:
+                description: The 3 letter IATA code of the departure airport
+                type: string
+                pattern: '[A-Z]{3}'
+                example: LHR
+              destination:
+                description: The 3 letter IATA code of the arrival airport
+                type: string
+                pattern: '[A-Z]{3}'
+                example: JFK
+              departureTime:
+                description: The scheduled departure time for this segment
+                type: string
+                format: datetime
+                example: "2021-04-12T11:20:50.52Z"
+              arrivalTime:
+                description: The scheduled arrival time for this segment
+                type: string
+                format: datetime
+                example: "2021-04-12T23:20:50.52Z"
+
+    TravelComponentHotel:
+      description: An hotel component of a trip
+      type: object
+      properties:
+        componentType:
+          description: A fixed value to identify Hotel components
+          type: string
+          enum:
+            - hotel
+        amounts:
+          $ref: '#/components/schemas/TravelComponentAmounts'
+        folioNumber:
+          description: The Hotel Confirmation Number
+          type: string
+          pattern: '[A-Z0-9]+'
+        checkInDate:
+          description: The check-in date in local time
+          type: string
+          format: date
+          example: "2021-04-12"
+        checkOutDate:
+          description: The check-out date in local time
+          type: string
+          format: date
+          example: "2021-04-13"
+        roomRates:
+          description: The room rates that apply for this trip
+          type: array
+          minItems: 1
+          items:
+            type: object
+            properties:
+              dayRateAmount:
+                description: The room rate monetary value
+                $ref: '#/components/schemas/Amount'
+              nightCount:
+                description: The number of nights at this rate
+                type: integer
+                example: 1
+
+    TravelComponents:
+      description: Contains the components of a trip
+      type: array
+      minItems: 1
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/TravelComponentAir'
+          - $ref: '#/components/schemas/TravelComponentHotel'
+
+    Intent:
+      description: Describes the intent of a payment
+      type: object
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        providerCode:
+          type: string
+          pattern: '[A-Z0-9]+'
+          example: 'AA'
+        returnUrl:
+          type: string
+          format: uri
+          example: 'https://example.com/return/?order=123456'
+
+    3DS:
+      description: Describes the result of a 3D-Secure authentication
+      type: object
+      properties:
+        eci:
+          description: E-Commerce Indicator
+          type: string
+          pattern: '^[0-9]{2}$'
+          example: '02'
+        xid:
+          description: Directory Server transaction ID (xid or dsTransId)
+          type: string
+          format: uuid
+          example: '1f88043a-7d5c-431b-be5d-bfebd6088992'
+        cavv:
+          description: Cardholder Authentication Verification Value
+          type: string
+          format: byte
+          example: 'OTkxOTA4MDkxNjMzMTYwNTUwMzY='
+        version:
+          description: Version of the 3DS Protocol
+          type: string
+          pattern: '[^[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}$'
+          example: '2.1.0'
+        directoryResponse:
+          description: Transaction status after ARes
+          type: string
+          enum:
+            - Y # Authenticated
+            - N # Authentication failed
+            - U # Not Available
+            - C # Challenge Needed
+            - R # Rejected
+            - A # Authentication Attempt
+          example: 'Y'
+        authenticationResponse:
+          description: Transaction status after RReq
+          type: string
+          enum:
+            - Y # Authenticated
+            - N # Authentication failed
+            - U # Not Available
+            - A # Authentication Attempt
+            - C # Process Incomplete
+        threeDSTransactionId:
+          description: Universally unique transaction identifier assigned by the 3DS Server to identify a single transaction
+          type: string
+          format: uuid
+          example: '8558c931-277b-4240-adfc-443cbd61a2c0'
+        transStatusReason:
+          description: Transaction Status Reason
+          type: string
+          pattern: '^[0-9]{2}$'
+          example: '01'
+
+    BalancesRequest:
+      description: Request the balances in each currency
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          total:
+            $ref: '#/components/schemas/Amount'
+          reserved:
+            $ref: '#/components/schemas/Amount'
+          available:
+            $ref: '#/components/schemas/Amount'
+      example:
+        {
+          "EUR": {
+            "total": "12500.00",
+            "reserved": "4500.00",
+            "available": "8000.00"
+          },
+          "CLP": {
+            "total": "45000",
+            "reserved": "0",
+            "available": "45000"
+          }
+        }
+
+    BankAddress:
+      type: object
+      properties:
+        addressFirstLine:
+          type: string
+          example: "Elsenheimer Str. 41"
+        postCode:
+          type: string
+          example: "80687"
+        city:
+          type: string
+          example: "München"
+        country:
+          type: string
+          example: "Germany"
+        stateCode:
+          type: string
+          example: "NY"
+
+    DepositInstructionsRequest:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          iban:
+            $ref: '#/components/schemas/Iban'
+          bic:
+            $ref: '#/components/schemas/Bic'
+          bankName:
+            type: string
+            example: "Handelsbank"
+          accountHolderName:
+            type: string
+            example: "Acme Corp"
+          bankAddress:
+            $ref: '#/components/schemas/BankAddress'
+      example:
+        {
+          "EUR": {
+            "iban": "DE51 7001 1110 6050 0008 91",
+            "bic": "DEKTDE7GXXX",
+            "bankName": "Handelsbank",
+            "accountHolderName": "Winding Tree Limited",
+            "bankAddress": {
+              "addressFirstLine": "Elsenheimer Str. 41",
+              "postCode": "80687",
+              "city": "München",
+              "country": "Germany",
+              "stateCode": null
+              }
+            }
+        }
+
+    WinAccommodation:
+      description: An accommodation object
+      allOf:
+        - $ref: '#/components/schemas/Accommodation'
+        - type: object
+          required:
+            - id
+          properties:
+            _id:
+              description: mongo id of the hotel
+              type: string
+            id:
+              description: uuid of the hotel (offer)
+              type: string
+
+    SetPassengersResponse:
+      description: error response;
+      type: object
+      required:
+        - expiration
+      properties:
+        expiration:
+          type: string
+          format: 'date-time'
+
+    SuccessResponse:
+      description: error response;
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: boolean
+          enum: [true]
+
+    BookingsAuthRequest:
+      description: Wallet authentication request
+      type: object
+      required:
+        - chainId
+        - signature
+        - secret
+        - wallet
+      properties:
+        chainId:
+          type: number
+          description: chain id
+        signature:
+          type: string
+        secret:
+          type: string
+        wallet:
+          type: string
+          description: address
+
+    BookingsAuthSecretResponse:
+      description: Bookings authentication secret response
+      type: object
+      required:
+        - secret
+      properties:
+        secret:
+          type: string
+
+    BookingsAuthResponse:
+      description: Bookings authentication response
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+
+    SessionResponse:
+      description: Bookings authentication secret response
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string
+
+    RewardOption:
+      description: option regarding the form of the reward
+      type: object
+      required:
+        - rewardType
+        - quantity
+        - tokenName
+      properties:
+        rewardType:
+          $ref: '#/components/schemas/RewardType'
+        quantity:
+          pattern: '^[0-9]+(.[0-9]+)?$'
+          type: string
+        tokenName:
+          type: string
+
+    RewardChoice:
+      description: choice regarding the form of the reward
+      type: object
+      properties:
+        rewardType:
+          $ref: '#/components/schemas/RewardType'
+
+    RewardType:
+      description: form of the reward
+      type: string
+      enum: ['CO2_OFFSET', 'TOKEN']
+
+    Deal:
+      description: db value of deal
+      type: object
+      required:
+        - offer
+        - offerId
+        - createdAt
+        - status
+      properties:
+        offer:
+          $ref: '#/components/schemas/OfferDbValue'
+        offerId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: ['paid', 'pending', 'booked', 'paymentError']
+        message:
+          type: string
+        orderId:
+          type: string
+
+    BookingRecord:
+      description: Complete booking information object
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Deal'
+      properties:
+        message:
+          type: string
+        orderId:
+          type: string
+
+    BookingResponse:
+      description: Bookings of address
+      type: array
+      items:
+        $ref: '#/components/schemas/BookingRecord'
+
+    OffersSearchRequest:
+      description: Offers search request
+      type: object
+      required:
+        - accommodation
+        - passengers
+      properties:
+        accommodation:
+          type: object
+          required:
+            - location
+            - arrival
+            - departure
+            - roomCount
+          properties:
+            location:
+              type: object
+              required:
+                - lon
+                - lat
+                - radius
+              properties:
+                lon:
+                  type: number
+                lat:
+                  type: number
+                radius:
+                  type: number
+            arrival:
+              type: string
+              format: date-time
+            departure:
+              type: string
+              format: date-time
+            roomCount:
+              type: number
+              minimum: 1
+        passengers:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/AdultGuest'
+              - $ref: '#/components/schemas/ChildGuest'
+
+    Disclosures:
+      description: List of disclosures
+      nullable: true
+      type: array
+      items:
+        type: array
+        items:
+          type: string
+          nullable: true
+          example: 'The seat charge is applicable to each one-way flight...'
+
+    OfferDbValue:
+      description: offer in db structure
+      type: object
+      required:
+        - _id
+        - id
+        - accommodation
+        - pricedItems
+        - disclosures
+        - price
+        - pricePlansReferences
+        - expiration
+        - arrival
+        - departure
+      properties:
+        _id:
+          type: string
+        id:
+          type: string
+        accommodation:
+          $ref: '#/components/schemas/WinAccommodation'
+        pricedItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceItem'
+        disclosures:
+          $ref: '#/components/schemas/Disclosures'
+        price:
+          $ref: '#/components/schemas/Price'
+        pricePlansReferences:
+          $ref: '#/components/schemas/PricePlansReferences'
+        expiration:
+          $ref: '#/components/schemas/Expiration'
+        arrival:
+          type: string
+          format: date-time
+        departure:
+          type: string
+          format: date-time
+
+    WinPricedOfferContent:
+      type: object
+      required:
+        - expiration
+        - price
+        - pricedItems
+        - disclosures
+      properties:
+        expiration:
+          $ref: '#/components/schemas/Expiration'
+        price:
+          $ref: '#/components/schemas/Price'
+        pricedItems:
+          description: Breakdown of items priced
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceItem'
+        disclosures:
+          $ref: '#/components/schemas/Disclosures'
+
+    WinPricedOffer:
+      description: An offer with confirmed price
+      type: object
+      required:
+        - offerId
+        - offer
+        - accommodation
+        - provider
+        - serviceId
+      properties:
+        offerId:
+          $ref: '#/components/schemas/UUID'
+        offer:
+          $ref: '#/components/schemas/WinPricedOfferContent'
+        accommodation:
+          $ref: '#/components/schemas/WinAccommodation'
+        provider:
+          type: string
+        serviceId:
+          type: string
+
+    Guest:
+      description: A representation of a Guest
+      type: object
+      required: ['type']
+      properties:
+        type:
+          description: The Guest type code as per IATA definitions
+          type: string
+          minLength: 3
+          maxLength: 3
+          enum:
+            - ADT # Adult (12+y)
+            - CHD # Child (2-11y)
+            - INF # Infant without a seat (<2y)
+          example: ADT
+        count:
+          description: Number of associated Guests of the same type
+          type: integer
+          example: 2
+          default: 1
+        civility:
+          description: The civility of the Guest
+          type: string
+          enum:
+            - MR
+            - MRS
+          example: 'MR'
+        lastnames:
+          description: The list of last names of this Guest
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/Name'
+        firstnames:
+          description: The list of first names of this Guest
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/Name'
+        middlenames:
+          description: The list of middle names of this Guest
+          type: array
+          minItems: 1
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/Name'
+        gender:
+          description: The gender of the Guest
+          type: string
+          enum:
+            - Male
+            - Female
+          example: Male
+        birthdate:
+          description: The birthdate of the Guest
+          type: string
+          format: date-time
+          example: '1980-03-21'
+        contactInformation:
+          description: The contact informations of the Guest
+          type: array
+          minItems: 1
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/PhoneNumber'
+              - $ref: '#/components/schemas/Email'
+      example:
+        {
+          'type': 'ADT',
+          'lastnames': ['Marley'],
+          'firstnames': ['Bob'],
+          'gender': 'Male',
+          'birthdate': '1980-03-21',
+          'contactInformation': ['+32123456789', 'contact@org.co.uk']
+        }
+
+    AdultGuest:
+      type: object
+      required:
+        - type
+        - count
+      properties:
+        type:
+          type: string
+          enum: ['ADT']
+        count:
+          type: number
+          minimum: 1
+
+    ChildGuest:
+      type: object
+      required:
+        - type
+        - count
+      properties:
+        type:
+          type: string
+          enum: ['CHD']
+        count:
+          type: number
+          minimum: 0
+        childrenAges:
+          type: array
+          items:
+            type: number
+            minimum: 2
+            maximum: 12
+
+    SearchResults:
+      description: An object to return search results
+      type: object
+      nullable: true
+      required:
+        - offers
+        - accommodations
+      properties:
+        offers:
+          description: The indexed list of offers
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Offer'
+        accommodations:
+          description: The accommodations matching an search request
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Accommodation'
+        pricePlans:
+          description: The indexed list of price plans
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/PricePlan'
+        passengers:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/Guest'
+          example:
+            PAX1: { 'type': 'ADT' }

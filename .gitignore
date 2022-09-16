@@ -16,3 +16,6 @@ dist
 build
 types
 temp
+pages
+
+.eslintcache

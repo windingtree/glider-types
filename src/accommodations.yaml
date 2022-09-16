@@ -1,0 +1,263 @@
+openapi: 3.0.3
+
+info:
+  title: The Accommodations
+  description: This is the interface documentation for the RESTful API interface for the set of Windingtree Accommodations Proxy servers
+  contact:
+    email: dev@windingtree.com
+  license:
+    name: GNU GENERAL PUBLIC LICENSE v3
+    url: https://www.gnu.org/licenses/gpl-3.0.html
+  version: 1.0.0
+
+servers:
+  - url: https://qa.hotels.simard.io/v1
+    description: Derbysoft Proxy Test API server
+  - url: https://qa.1a-hotels.simard.io/v1
+    description: Amadeus Proxy Test API server
+
+tags:
+  - name: offers
+    description: Operations with Offers
+  - name: orders
+    description: Operations with Orders
+
+paths:
+  /offers/search:
+    post:
+      tags:
+        - offers
+      summary: Search for offers matching search criteria
+      operationId: offersWithSearchCriteria
+      requestBody:
+        description: Search for offers matching input criteria
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchCriteria'
+      responses:
+        200:
+          description: Offers Retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
+
+  /offers/{offerId}/price:
+    post:
+      tags:
+        - offers
+      summary: Get the final price for a selected Offer
+      description: Providing an offer information with confirmed price
+      operationId: priceOffer
+      parameters:
+        - name: offerId
+          in: path
+          description: ID of a selected offer
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: Offer with confirmed price
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PricedOfferResponse'
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized to retrieve this order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests, rate limit has been reached
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
+
+  /orders/createWithOffer:
+    post:
+      tags:
+        - orders
+      summary: Place an order using a given offer
+      operationId: orderCreateWithOffer
+      requestBody:
+        description: Reference of the offers and details of the passengers
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOfferRequest'
+      responses:
+        200:
+          description: Order Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWithOfferResponse'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
+
+  /orders/cancel:
+    delete:
+      tags:
+        - orders
+      summary: Cancel an existing order
+      operationId: cancelOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCancellationRequest'
+      responses:
+        200:
+          description: Order cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCancellationResponse'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
