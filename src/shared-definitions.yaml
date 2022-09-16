@@ -1553,6 +1553,9 @@ components:
             id:
               description: uuid of the hotel (offer)
               type: string
+            provider:
+              description: provider id
+              type: string
 
     SetPassengersResponse:
       description: error response;
@@ -1761,6 +1764,7 @@ components:
         - expiration
         - arrival
         - departure
+        - provider
       properties:
         _id:
           type: string
@@ -1787,8 +1791,8 @@ components:
           type: string
           format: date-time
         provider:
-              description: provider id
-              type: string
+          description: provider id
+          type: string
 
     WinPricedOfferContent:
       type: object
