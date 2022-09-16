@@ -1553,6 +1553,9 @@ components:
             id:
               description: uuid of the hotel (offer)
               type: string
+            provider:
+              description: provider id
+              type: string
 
     SetPassengersResponse:
       description: error response;
