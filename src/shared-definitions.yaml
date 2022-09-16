@@ -1828,6 +1828,8 @@ components:
           type: string
         serviceId:
           type: string
+        quote:
+          $ref: '#/components/schemas/Quote'
 
     Guest:
       description: A representation of a Guest
