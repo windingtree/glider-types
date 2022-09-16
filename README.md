@@ -61,7 +61,8 @@ If it is required, a definition can have format validation rules in regular expr
 ## Supported projects
 
 - The accommodations API
-- Simard
+- Simard Pay API
+- Win-backend API
 
 To add new project:
 
