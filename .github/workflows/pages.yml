@@ -2,7 +2,7 @@ name: Deploy swagger UI files to Pages
 
 on:
   push:
-    branches: ["feat/new-repo"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
