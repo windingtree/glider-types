@@ -2023,7 +2023,7 @@ components:
           description: The accommodations matching an search request
           type: object
           additionalProperties:
-            $ref: '#/components/schemas/Accommodation'
+            $ref: '#/components/schemas/WinAccommodation'
         pricePlans:
           description: The indexed list of price plans
           type: object
