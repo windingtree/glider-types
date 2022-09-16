@@ -1539,6 +1539,20 @@ components:
             }
         }
 
+    MongoLocation:
+      description: An accommodation location object
+      type: object
+      required:
+        - type
+        - coordinates
+      properties:
+        type:
+          type: string
+        coordinates:
+          type: array
+          items:
+            type: number
+
     WinAccommodation:
       description: An accommodation object
       allOf:
@@ -1553,6 +1567,8 @@ components:
             id:
               description: uuid of the hotel (offer)
               type: string
+            location:
+              $ref: '#/components/schemas/MongoLocation'
             provider:
               description: provider id
               type: string
