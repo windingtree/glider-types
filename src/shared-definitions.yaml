@@ -6,6 +6,14 @@ components:
       bearerFormat: JWT
 
   schemas:
+    EtherAddress:
+      description: address
+      type: string
+      minLength: 42
+      maxLength: 42
+      pattern: '^0x[a-fA-F0-9]{40}$'
+      example: '0x0000000000000000000000000000000000000000'
+
     Error:
       description: Objet describing an error
       type: object
