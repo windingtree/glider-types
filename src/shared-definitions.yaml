@@ -2064,7 +2064,7 @@ components:
       properties:
         organizerInfo:
           description: information about the organizer.
-          $ref: '#components/schemas/OrganizerInformation'
+          $ref: '#/components/schemas/OrganizerInformation'
         invoice:
           description: set to true if an invoice is needed.
           type: boolean
@@ -2075,10 +2075,10 @@ components:
           description: combination on offers and quantity requested.
           type: array
           items:
-            $ref: '#components/schema/OfferIdAndQuantity'
+            $ref: '#/components/schemas/OfferIdAndQuantity'
         deposit:
           description: value of the deposit paid for the group booking request
-          $ref: '#components/schema/GroupBookingDeposit'
+          $ref: '#/components/schemas/GroupBookingDeposit'
 
     OfferIdAndQuantity:
       description: Representation of an offerId and its associated quantity
@@ -2086,7 +2086,7 @@ components:
       required: ['offerId', 'quantity']
       properties:
         offerId:
-          $ref: '#component/schema/UUID'
+          $ref: '#/components/schemas/UUID'
         quantity:
           description: number of offerId requested.
           type: integer
