@@ -292,7 +292,7 @@ components:
           'firstnames': ['Bob'],
           'gender': 'Male',
           'birthdate': '1980-03-21',
-          'contactInformation': ['+32123456789', 'contact@org.co.uk']
+          'contactInformation': ['+32123456789', 'contact@org.co.uk'],
         }
 
     LocationSearch:
@@ -322,7 +322,7 @@ components:
           'south': 50.0929802,
           'west': 14.4012451,
           'north': 50.0812615,
-          'east': 14.4394467
+          'east': 14.4394467,
         }
 
     LocationCircle:
@@ -427,7 +427,7 @@ components:
           'checkinoutPolicy',
           'otherPolicies',
           'media',
-          'roomTypes'
+          'roomTypes',
         ]
       properties:
         hotelId:
@@ -481,7 +481,7 @@ components:
           'otherPolicies',
           'media',
           'roomTypes',
-          'id'
+          'id',
         ]
       properties:
         hotelId:
@@ -517,8 +517,8 @@ components:
           additionalProperties:
             $ref: '#/components/schemas/RoomTypes'
         _id:
-              description: mongo id of the hotel
-              type: string
+          description: mongo id of the hotel
+          type: string
         id:
           description: uuid of the hotel (offer)
           type: string
@@ -539,7 +539,7 @@ components:
           'size',
           'maximumOccupancy',
           'media',
-          'policies'
+          'policies',
         ]
       properties:
         name:
@@ -716,7 +716,7 @@ components:
       example:
         {
           '7b7b18e2-7357-4e98-9be6-aa182e0b090a':
-            { 'accommodation': 'prov.1234', 'roomType': 'ND' }
+            { 'accommodation': 'prov.1234', 'roomType': 'ND' },
         }
 
     AdditionalPricePlanProperties:
@@ -880,19 +880,22 @@ components:
           description: Result of cancellation
           type: string
       example:
-        { 'orderId': '11111111-2222-3333-4444-000000000001', 'status': 'CANCELLED' }
+        {
+          'orderId': '11111111-2222-3333-4444-000000000001',
+          'status': 'CANCELLED',
+        }
 
     Iban:
       description: The International Bank Account Number
       type: string
-      pattern: "^[A-Z]{2}[A-Z0-9]+$"
-      example: "CH9300762011623852957"
+      pattern: '^[A-Z]{2}[A-Z0-9]+$'
+      example: 'CH9300762011623852957'
 
     Bic:
       description: The Swift/BIC Code as per ISO 9362
       type: string
-      pattern: "^[A-Z0-9]{8-11}$"
-      example: "CRESCHZZXXX"
+      pattern: '^[A-Z0-9]{8-11}$'
+      example: 'CRESCHZZXXX'
 
     Account:
       description: The reference of an account
@@ -906,8 +909,8 @@ components:
     Rate:
       description: A conversion rate between currencies
       type: string
-      pattern: "^[0-9]+(.[0-9]+)?$"
-      example: "0.0985"
+      pattern: '^[0-9]+(.[0-9]+)?$'
+      example: '0.0985'
 
     # @todo Fix the ORGiD format according to v2
     OrgId:
@@ -939,17 +942,17 @@ components:
       type: object
       properties:
         instrument:
-          description: "Indicates the instrument used as a funding mechanism"
+          description: 'Indicates the instrument used as a funding mechanism'
           type: string
           enum:
-          - blockchain
+            - blockchain
         chain:
-          description: "For blockchain funding source, indicates the chain"
+          description: 'For blockchain funding source, indicates the chain'
           type: string
           enum:
-          - ethereum
+            - ethereum
         transactionHash:
-          description: "For blockchain funding source, indicates the transaction hash"
+          description: 'For blockchain funding source, indicates the transaction hash'
           type: string
           pattern: '^0x[0-9a-f]{64}$'
           example: 0xae7ec88780eb946528a3e443373de4c5f82d5311cef0788c72b835b52048b8b3
@@ -987,17 +990,17 @@ components:
           description: The brand of the card
           type: string
           enum:
-          - visa
-          - mastercard
-          - amex
-          - bancontact
-          - diners
-          - discover
-          - jcb
-          - maestro
-          - uatp
-          - unionpay
-          - electron
+            - visa
+            - mastercard
+            - amex
+            - bancontact
+            - diners
+            - discover
+            - jcb
+            - maestro
+            - uatp
+            - unionpay
+            - electron
         accountNumber:
           description: The account number of the card
           type: string
@@ -1022,9 +1025,9 @@ components:
           description: Type of the card
           type: string
           enum:
-          - debit
-          - credit
-          - prepaid
+            - debit
+            - credit
+            - prepaid
 
     Token:
       description: A tokenized payment card
@@ -1042,17 +1045,17 @@ components:
           description: The brand of the card
           type: string
           enum:
-          - visa
-          - mastercard
-          - amex
-          - bancontact
-          - diners
-          - discover
-          - jcb
-          - maestro
-          - uatp
-          - unionpay
-          - electron
+            - visa
+            - mastercard
+            - amex
+            - bancontact
+            - diners
+            - discover
+            - jcb
+            - maestro
+            - uatp
+            - unionpay
+            - electron
         aliasAccountNumber:
           description: The alias account number of the card
           type: string
@@ -1082,8 +1085,8 @@ components:
           description: Type of the card
           type: string
           enum:
-          - debit
-          - credit
+            - debit
+            - credit
         billingAddress:
           $ref: '#/components/schemas/BillingAddress'
         3ds:
@@ -1148,6 +1151,7 @@ components:
     BillingAddress:
       description: The billing address of a card
       type: object
+      required: ['countryCode', 'cityName', 'street']
       properties:
         countryCode:
           description: The 2-letters ISO country code
@@ -1324,10 +1328,10 @@ components:
                 description: Tax code to identify the type of tax (for non-air)
                 type: string
                 enum:
-                  - value_added         # VAT
-                  - goods_and_services  # GST
-                  - provincial_sales    # PST
-                  - quebec_sales        # QST
+                  - value_added # VAT
+                  - goods_and_services # GST
+                  - provincial_sales # PST
+                  - quebec_sales # QST
               countryCode:
                 description: ISO3166-1 country code collecting the tax (when applicable)
                 type: string
@@ -1339,10 +1343,10 @@ components:
       type: object
       properties:
         componentType:
-            description: A fixed value to identify Air components
-            type: string
-            enum:
-              - air
+          description: A fixed value to identify Air components
+          type: string
+          enum:
+            - air
         amounts:
           $ref: '#/components/schemas/TravelComponentAmounts'
         recordLocator:
@@ -1403,12 +1407,12 @@ components:
                 description: The scheduled departure time for this segment
                 type: string
                 format: datetime
-                example: "2021-04-12T11:20:50.52Z"
+                example: '2021-04-12T11:20:50.52Z'
               arrivalTime:
                 description: The scheduled arrival time for this segment
                 type: string
                 format: datetime
-                example: "2021-04-12T23:20:50.52Z"
+                example: '2021-04-12T23:20:50.52Z'
 
     TravelComponentHotel:
       description: An hotel component of a trip
@@ -1429,12 +1433,12 @@ components:
           description: The check-in date in local time
           type: string
           format: date
-          example: "2021-04-12"
+          example: '2021-04-12'
         checkOutDate:
           description: The check-out date in local time
           type: string
           format: date
-          example: "2021-04-13"
+          example: '2021-04-13'
         roomRates:
           description: The room rates that apply for this trip
           type: array
@@ -1545,16 +1549,13 @@ components:
             $ref: '#/components/schemas/Amount'
       example:
         {
-          "EUR": {
-            "total": "12500.00",
-            "reserved": "4500.00",
-            "available": "8000.00"
-          },
-          "CLP": {
-            "total": "45000",
-            "reserved": "0",
-            "available": "45000"
-          }
+          'EUR':
+            {
+              'total': '12500.00',
+              'reserved': '4500.00',
+              'available': '8000.00',
+            },
+          'CLP': { 'total': '45000', 'reserved': '0', 'available': '45000' },
         }
 
     BankAddress:
@@ -1562,19 +1563,19 @@ components:
       properties:
         addressFirstLine:
           type: string
-          example: "Elsenheimer Str. 41"
+          example: 'Elsenheimer Str. 41'
         postCode:
           type: string
-          example: "80687"
+          example: '80687'
         city:
           type: string
-          example: "München"
+          example: 'München'
         country:
           type: string
-          example: "Germany"
+          example: 'Germany'
         stateCode:
           type: string
-          example: "NY"
+          example: 'NY'
 
     DepositInstructionsRequest:
       type: object
@@ -1587,27 +1588,29 @@ components:
             $ref: '#/components/schemas/Bic'
           bankName:
             type: string
-            example: "Handelsbank"
+            example: 'Handelsbank'
           accountHolderName:
             type: string
-            example: "Acme Corp"
+            example: 'Acme Corp'
           bankAddress:
             $ref: '#/components/schemas/BankAddress'
       example:
         {
-          "EUR": {
-            "iban": "DE51 7001 1110 6050 0008 91",
-            "bic": "DEKTDE7GXXX",
-            "bankName": "Handelsbank",
-            "accountHolderName": "Winding Tree Limited",
-            "bankAddress": {
-              "addressFirstLine": "Elsenheimer Str. 41",
-              "postCode": "80687",
-              "city": "München",
-              "country": "Germany",
-              "stateCode": null
-              }
-            }
+          'EUR':
+            {
+              'iban': 'DE51 7001 1110 6050 0008 91',
+              'bic': 'DEKTDE7GXXX',
+              'bankName': 'Handelsbank',
+              'accountHolderName': 'Winding Tree Limited',
+              'bankAddress':
+                {
+                  'addressFirstLine': 'Elsenheimer Str. 41',
+                  'postCode': '80687',
+                  'city': 'München',
+                  'country': 'Germany',
+                  'stateCode': null,
+                },
+            },
         }
 
     MongoLocation:
@@ -1635,12 +1638,22 @@ components:
           format: 'date-time'
 
     SuccessResponse:
-      description: error response;
+      description: success response;
       type: object
       required:
         - status
       properties:
         status:
+          type: boolean
+          enum: [true]
+
+    SuccessResponseAlt:
+      description: success response;
+      type: object
+      required:
+        - success
+      properties:
+        success:
           type: boolean
           enum: [true]
 
@@ -1979,7 +1992,7 @@ components:
           'firstnames': ['Bob'],
           'gender': 'Male',
           'birthdate': '1980-03-21',
-          'contactInformation': ['+32123456789', 'contact@org.co.uk']
+          'contactInformation': ['+32123456789', 'contact@org.co.uk'],
         }
 
     AdultGuest:
@@ -2043,3 +2056,75 @@ components:
             $ref: '#/components/schemas/Guest'
           example:
             PAX1: { 'type': 'ADT' }
+
+    GroupBookingRequest:
+      description: Representation of a group booking request.
+      type: object
+      required: ['organizerInfo', 'invoice', 'guestCount', 'offers', 'deposit']
+      properties:
+        organizerInfo:
+          description: information about the organizer.
+          $ref: '#components/schemas/OrganizerInformation'
+        invoice:
+          description: set to true if an invoice is needed.
+          type: boolean
+        guestCount:
+          description: number of guests in the booking request.
+          type: integer
+        offers:
+          description: combination on offers and quantity requested.
+          type: array
+          items:
+            $ref: '#components/schema/OfferIdAndQuantity'
+        deposit:
+          description: value of the deposit paid for the group booking request
+          $ref: '#components/schema/GroupBookingDeposit'
+
+    OfferIdAndQuantity:
+      description: Representation of an offerId and its associated quantity
+      type: object
+      required: ['offerId', 'quantity']
+      properties:
+        offerId:
+          $ref: '#component/schema/UUID'
+        quantity:
+          description: number of offerId requested.
+          type: integer
+
+    OrganizerInformation:
+      description: Contact and corporate information of the organizer
+      type: object
+      required: ['firstName', 'lastName', 'phoneNumber', 'emailAddress']
+      properties:
+        firstName:
+          $ref: '#/components/schemas/Name'
+        lastName:
+          $ref: '#/components/schemas/Name'
+        phoneNumber:
+          $ref: '#/components/schemas/PhoneNumber'
+        emailAddress:
+          $ref: '#/components/schemas/Email'
+        corporateInfo:
+          $ref: '#/components/schemas/CorporateInformation'
+
+    CorporateInformation:
+      description: Corporate information
+      required: ['organizationName', 'billingAddress']
+      properties:
+        companyName:
+          description: Name of the company
+          type: string
+        billingAddress:
+          $ref: '#/components/schemas/BillingAddress'
+        vatNumber:
+          description: VAT number of the company
+          type: string
+
+    GroupBookingDeposit:
+      description: Representation of a deposit.
+      required: ['amount', 'currency']
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+        currency:
+          $ref: '#/components/schemas/Currency'
