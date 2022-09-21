@@ -1873,6 +1873,8 @@ components:
         provider:
           description: provider id
           type: string
+        quote:
+          $ref: '#/components/schemas/Quote'
 
     WinPricedOfferContent:
       type: object
