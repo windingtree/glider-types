@@ -2130,3 +2130,11 @@ components:
           $ref: '#/components/schemas/Amount'
         currency:
           $ref: '#/components/schemas/Currency'
+
+    GroupBookingRequestResponse:
+      description: Representation of a response to a group booking request
+      required: ['requestId']
+      properties:
+        requestId:
+          description: Id of the group booking request
+          type: string
