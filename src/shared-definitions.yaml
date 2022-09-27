@@ -2130,7 +2130,7 @@ components:
 
     GroupBookingDeposits:
       description: Available deposit options
-      required: ['usd', 'offerCurrency']
+      required: ['offerCurrency']
       properties:
         usd:
           description: the deposit in USD
