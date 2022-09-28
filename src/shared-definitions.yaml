@@ -2062,7 +2062,7 @@ components:
     GroupBookingRequest:
       description: Representation of a group booking request.
       type: object
-      required: ['organizerInfo', 'invoice', 'guestCount', 'offers', 'deposit']
+      required: ['organizerInfo', 'invoice', 'guestCount', 'offers']
       properties:
         organizerInfo:
           description: information about the organizer.
@@ -2078,9 +2078,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/OfferIdAndQuantity'
-        deposit:
-          description: value of the deposit paid for the group booking request
-          $ref: '#/components/schemas/GroupBookingDeposit'
 
     OfferIdAndQuantity:
       description: Representation of an offerId and its associated quantity
@@ -2131,10 +2128,26 @@ components:
         currency:
           $ref: '#/components/schemas/Currency'
 
+    GroupBookingDeposits:
+      description: Available deposit options
+      required: ['offerCurrency']
+      properties:
+        usd:
+          description: the deposit in USD
+          $ref: '#/components/schemas/Amount'
+        preferredCurrency:
+          description: the deposit in the user preferred currency
+          $ref: '#/components/schemas/GroupBookingDeposit'
+        offerCurrency:
+          description: the deposit in the currency of the offer
+          $ref: '#/components/schemas/GroupBookingDeposit'
+
     GroupBookingRequestResponse:
       description: Representation of a response to a group booking request
-      required: ['requestId']
+      required: ['requestId', 'depositOptions']
       properties:
         requestId:
           description: Id of the group booking request
           type: string
+        depositOptions:
+          $ref: '#/components/schemas/GroupBookingDeposits'
