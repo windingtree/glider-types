@@ -362,7 +362,7 @@ components:
         $ref: '#/components/schemas/MediaItem'
 
     Disclosure:
-      description: DIsclosure information
+      description: Disclosure information
       type: array
       items:
         type: string
@@ -621,6 +621,8 @@ components:
           $ref: '#/components/schemas/Price'
         pricePlansReferences:
           $ref: '#/components/schemas/PricePlansReferences'
+        convertedPrice:
+          $ref: '#/components/schemas/ConvertedPrice'
 
     OfferPriced:
       type: object
@@ -1698,15 +1700,6 @@ components:
         refreshToken:
           type: string
 
-    SessionResponse:
-      description: Bookings authentication secret response
-      type: object
-      required:
-        - token
-      properties:
-        token:
-          type: string
-
     RewardOption:
       description: option regarding the form of the reward
       type: object
@@ -1775,6 +1768,13 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/BookingRecord'
+
+    ConvertedPrice:
+      description: converted price in USD
+      type: object
+      properties:
+        USD:
+          type: string
 
     OffersSearchRequest:
       description: Offers search request

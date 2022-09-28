@@ -635,48 +635,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /session:
-    get:
-      summary: get session token
-      tags: [auth]
-      responses:
-        200:
-          description: It's ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SessionResponse'
-        400:
-          description: Handled Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        401:
-          description: Handled Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        403:
-          description: Handled Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        404:
-          description: Handled Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        500:
-          description: Some server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
   /hotels/offers/search:
     post:
       tags: [offers]
