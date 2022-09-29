@@ -11,22 +11,22 @@ info:
   version: 1.0.1
 
 servers:
-- url: https://staging.payment.simard.io/api/v1
-  description: The Simard Pay Staging server
+  - url: https://staging.payment.simard.io/api/v1
+    description: The Simard Pay Staging server
 
 tags:
-- name: balances
-  description: Operations with Balances
-- name: quotes
-  description: Operations with currency conversions
-- name: accounts
-  description: Operation with recipient accounts
-- name: cards
-  description: Operation with virtual cards
-- name: tokens
-  description: Operations with card tokens
-- name: test
-  description: Operations available only in test environments
+  - name: balances
+    description: Operations with Balances
+  - name: quotes
+    description: Operations with currency conversions
+  - name: accounts
+    description: Operation with recipient accounts
+  - name: cards
+    description: Operation with virtual cards
+  - name: tokens
+    description: Operations with card tokens
+  - name: test
+    description: Operations available only in test environments
 
 paths:
   /balances:
@@ -193,10 +193,10 @@ paths:
               $ref: '#/components/schemas/Guarantee'
             example:
               {
-                "currency": "USD",
-                "amount": "300.00",
-                "creditorOrgId": "0x71cd1781a3082f33d2521ac8290c9d4b3b3b116e4e8548a4914b71a1f7201da0",
-                "expiration": "2020-03-30T13:37:38.835Z",
+                'currency': 'USD',
+                'amount': '300.00',
+                'creditorOrgId': '0x71cd1781a3082f33d2521ac8290c9d4b3b3b116e4e8548a4914b71a1f7201da0',
+                'expiration': '2020-03-30T13:37:38.835Z',
               }
       responses:
         200:
@@ -444,7 +444,7 @@ paths:
   /accounts:
     post:
       tags:
-      - accounts
+        - accounts
       summary: Provides a recipient account
       operationId: registerAccount
       requestBody:
@@ -714,7 +714,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Quote'
+              $ref: '#/components/schemas/QuoteRequest'
       responses:
         200:
           description: Quote has been created
@@ -753,7 +753,7 @@ paths:
           $ref: '#/components/schemas/UUID'
     get:
       tags:
-      - quotes
+        - quotes
       summary: Retrieve a quote
       operationId: retrieveQuote
       responses:
@@ -816,6 +816,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: ['rate']
                 properties:
                   rate:
                     $ref: '#/components/schemas/Rate'
@@ -975,7 +976,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
-          - bearerAuth: []
+        - bearerAuth: []
 
   /tokens/travel-account:
     post:
@@ -1072,7 +1073,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
-          - bearerAuth: []
+        - bearerAuth: []
 
   /intents:
     post:
@@ -1114,4 +1115,4 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
-          - bearerAuth: []
+        - bearerAuth: []
