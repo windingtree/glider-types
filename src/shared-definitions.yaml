@@ -963,6 +963,15 @@ components:
 
     Quote:
       description: A quote for exchange between currencies
+      required:
+        [
+          'quoteId',
+          'sourceCurrency',
+          'sourceAmount',
+          'targetCurrency',
+          'targetAmount',
+          'rate',
+        ]
       type: object
       properties:
         quoteId:
@@ -979,6 +988,38 @@ components:
           $ref: '#/components/schemas/Amount'
         rate:
           $ref: '#/components/schemas/Rate'
+
+    QuoteRequest:
+      description: A quote request for exchange between currencies
+      required: ['sourceCurrency', 'targetCurrency']
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/ConvertFromSource'
+        - $ref: '#/components/schemas/ConvertToTarget'
+
+    ConvertFromSource:
+      description: Convert sourceAmount to targetAmount
+      required: ['sourceCurrency', 'sourceAmount', 'targetCurrency']
+      type: object
+      properties:
+        sourceCurrency:
+          $ref: '#/components/schemas/Currency'
+        sourceAmount:
+          $ref: '#/components/schemas/Amount'
+        targetCurrency:
+          $ref: '#/components/schemas/Currency'
+
+    ConvertToTarget:
+      description: Compute the sourceAmount such as the conversion of sourceAmount matches targetAmount
+      required: ['sourceCurrency', 'targetCurrency', 'targetAmount']
+      type: object
+      properties:
+        sourceCurrency:
+          $ref: '#/components/schemas/Currency'
+        targetCurrency:
+          $ref: '#/components/schemas/Currency'
+        targetAmount:
+          $ref: '#/components/schemas/Amount'
 
     Card:
       description: A payment card
