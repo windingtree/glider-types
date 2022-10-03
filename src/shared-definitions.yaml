@@ -2185,10 +2185,13 @@ components:
 
     GroupBookingRequestResponse:
       description: Representation of a response to a group booking request
-      required: ['requestId', 'depositOptions']
+      required: ['requestId', 'serviceId', 'depositOptions']
       properties:
         requestId:
           description: Id of the group booking request
+          $ref: '#/components/schemas/UUID'
+        serviceId:
+          description: serviceId associated to the group booking request
           type: string
         depositOptions:
           $ref: '#/components/schemas/GroupBookingDeposits'
