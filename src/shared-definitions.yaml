@@ -393,11 +393,8 @@ components:
               type: integer
               example: 2
         refundability:
-          description: the list of penalties or policies associated with a given price plan
-          type: array
-          maxItems: 99
-          items:
-            $ref: '#/components/schemas/RefundabilityPolicy'
+          description: refundability/cancellation policy associated with a given price plan
+          $ref: '#/components/schemas/RefundabilityPolicy'
 
     RefundabilityPolicy:
       description: Accommodation refundability policy in case of booking cancellation
