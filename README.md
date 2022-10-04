@@ -28,6 +28,7 @@ import { derbysoft_proxy } from '@windingtree/glider-types';
 
 // derbysoft_proxy.definitions.Price
 // ...
+// ...
 ```
 
 ## Typescript types
