@@ -261,3 +261,62 @@ paths:
       security:
         - bearerAuth: []
       x-codegen-request-body-name: body
+  /groups/search:
+    post:
+      tags:
+        - groups
+      summary: Search for hotels that can accommodate group(>9 rooms) and get offers with estimated prices that are subject to group quote (offline process)
+      operationId: groupOffersWithSearchCriteria
+      requestBody:
+        description: Search for offers matching input criteria
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchCriteria'
+      responses:
+        200:
+          description: Offers Retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
