@@ -420,7 +420,12 @@ components:
           minLength: 1
           maxLength: 99
           example: '100.00'
-      example: { 'type': 'refundable_with_deadline', 'deadline': '2022-10-12T23:59:59.59Z', 'penaltyAmount': '100.00' }
+      example:
+        {
+          'type': 'refundable_with_deadline',
+          'deadline': '2022-10-12T23:59:59.59Z',
+          'penaltyAmount': '100.00',
+        }
 
     AccommodationType:
       description: Type of accommodation service
@@ -2214,13 +2219,16 @@ components:
 
     GroupBookingRequestResponse:
       description: Representation of a response to a group booking request
-      required: ['requestId', 'serviceId', 'depositOptions']
+      required: ['requestId', 'serviceId', 'providerId', 'depositOptions']
       properties:
         requestId:
           description: Id of the group booking request
           $ref: '#/components/schemas/UUID'
         serviceId:
-          description: serviceId associated to the group booking request
+          description: blockchain Id of the group booking request
+          type: string
+        providerId:
+          description: blockchain Id of the provider of the service
           type: string
         depositOptions:
           $ref: '#/components/schemas/GroupBookingDeposits'
