@@ -1821,7 +1821,7 @@ components:
           format: date-time
         status:
           type: string
-          enum: ['paid', 'pending', 'booked', 'paymentError']
+          enum: ['paid', 'pending', 'booked', 'serverError', 'paymentError', 'paymentValidationError', 'networkError', 'creationFailed', 'cancelled']
         message:
           type: string
         orderId:
