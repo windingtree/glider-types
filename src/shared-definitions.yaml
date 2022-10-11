@@ -2178,18 +2178,18 @@ components:
           $ref: '#/components/schemas/PhoneNumber'
         emailAddress:
           $ref: '#/components/schemas/Email'
-        corporateInfo:
-          $ref: '#/components/schemas/CorporateInformation'
+        billingInfo:
+          $ref: '#/components/schemas/BillingInformation'
 
-    CorporateInformation:
+    BillingInformation:
       description: Corporate information
-      required: ['organizationName', 'billingAddress']
+      required: ['address']
       properties:
+        address:
+          $ref: '#/components/schemas/BillingAddress'
         companyName:
           description: Name of the company
           type: string
-        billingAddress:
-          $ref: '#/components/schemas/BillingAddress'
         vatNumber:
           description: VAT number of the company
           type: string
