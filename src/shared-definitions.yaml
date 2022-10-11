@@ -2137,14 +2137,11 @@ components:
     GroupBookingRequest:
       description: Representation of a group booking request.
       type: object
-      required: ['organizerInfo', 'invoice', 'guestCount', 'offers']
+      required: ['organizerInfo', 'guestCount', 'offers']
       properties:
         organizerInfo:
           description: information about the organizer.
           $ref: '#/components/schemas/OrganizerInformation'
-        invoice:
-          description: set to true if an invoice is needed.
-          type: boolean
         guestCount:
           description: number of guests in the booking request.
           type: integer
@@ -2179,10 +2176,11 @@ components:
         emailAddress:
           $ref: '#/components/schemas/Email'
         billingInfo:
+          description: This field must be filled to receive an invoice
           $ref: '#/components/schemas/BillingInformation'
 
     BillingInformation:
-      description: Corporate information
+      description: Billing information
       required: ['address']
       properties:
         address:
