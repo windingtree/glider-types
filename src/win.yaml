@@ -774,15 +774,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /hotels/{accommodationId}:
-    get:
+  /hotels/{providerHotelId}:
+    post:
       tags: [offers]
       parameters:
         - in: path
-          name: accommodationId
+          name: providerHotelId
           required: true
           schema:
-            $ref: '#/components/schemas/UUID'
+            $ref: '#/components/schemas/EtherId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OffersSearchRequest'
       responses:
         200:
           description: It's ok
