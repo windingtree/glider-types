@@ -400,9 +400,6 @@ components:
             quantity:
               type: integer
               example: 2
-        refundability:
-          description: refundability/cancellation policy associated with a given price plan
-          $ref: '#/components/schemas/RefundabilityPolicy'
 
     RefundabilityPolicy:
       description: Accommodation refundability policy in case of booking cancellation
@@ -669,6 +666,9 @@ components:
           $ref: '#/components/schemas/PricePlansReferences'
         convertedPrice:
           $ref: '#/components/schemas/ConvertedPrice'
+        refundability:
+          description: refundability/cancellation policy associated with a given price plan
+          $ref: '#/components/schemas/RefundabilityPolicy'
 
     OfferPriced:
       type: object
