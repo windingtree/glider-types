@@ -776,7 +776,7 @@ paths:
 
   /hotels/{providerHotelId}:
     get:
-      tags: [ offers ]
+      tags: [offers]
       parameters:
         - in: path
           name: providerHotelId
@@ -1260,6 +1260,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponseAlt'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /currencies:
+    get:
+      tags: [currencies]
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrencyResponse'
         400:
           description: Handled Error
           content:
