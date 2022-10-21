@@ -1265,7 +1265,7 @@ components:
         street:
           description: The street address
           type: string
-          pattern: '^[-A-Z0-9 \'']+$'
+          pattern: '^[-A-Z0-9\,\.\- \'']+$'
           example: '1 CIRCLE ROAD'
 
     TokenCreate:
