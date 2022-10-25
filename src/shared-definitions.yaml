@@ -2247,23 +2247,31 @@ components:
           $ref: '#/components/schemas/GroupBookingDeposits'
 
     CurrencyResponse:
-      description: List of currency meta with rates
+      description: List of currency metadata with rates
       type: object
-      additionalProperties:
-        $ref: '#/components/schemas/CurrencyMetaWin'
+      required: ['baseCurrency', 'currencies']
+      properties:
+        baseCurrency:
+          description: The currency used as base for conversion rates
+          $ref: '#/components/schemas/Currency'
+        currencies:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/CurrencyMetaWin'
 
     CurrencyMetaWin:
       type: object
       required: ['name', 'symbol', 'rateFromBaseCurrency', 'decimals']
       properties:
         name:
-          description: currency symbol
+          description: The full name of the currency
           type: string
         symbol:
-          description: currency symbol
+          description: The currency symbol
           type: string
         rateFromBaseCurrency:
-          description: сгккутсн rate to USD
+          description: The conversion rate from base currency
           type: integer
         decimals:
+          description: The number of decimals for this currency
           type: integer
