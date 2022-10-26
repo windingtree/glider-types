@@ -2271,7 +2271,7 @@ components:
           type: string
         rateFromBaseCurrency:
           description: The conversion rate from base currency
-          type: integer
+          type: string
         decimals:
           description: The number of decimals for this currency
           type: integer
