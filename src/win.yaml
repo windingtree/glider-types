@@ -634,7 +634,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
+  #start deprecated
   /hotels/offers/search:
     post:
       tags: [offers]
@@ -783,6 +783,251 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/EtherId'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WinAccommodation'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags: [offers]
+      parameters:
+        - in: path
+          name: providerHotelId
+          required: true
+          schema:
+            $ref: '#/components/schemas/EtherId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OffersSearchRequest'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  #end deprecated
+
+  /accommodations/offers/search:
+    parameters:
+      - in: query
+        name: accommodationId
+        schema:
+          #todo change type after it will be available
+          type: string
+    post:
+      tags: [offers]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OffersSearchRequest'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResults'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /accommodations/offers/{offerId}/price:
+    post:
+      tags: [offers]
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WinPricedOffer'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      tags: [offers]
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/UUID'
+      responses:
+        200:
+          description: It's ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WinPricedOffer'
+        400:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Handled Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Some server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /accommodations/{providerHotelId}:
+    get:
+      tags: [offers]
+      parameters:
+        - in: path
+          name: providerHotelId
+          required: true
+          schema:
+            #todo change type after it will be available
+            type: string
       responses:
         200:
           description: It's ok
