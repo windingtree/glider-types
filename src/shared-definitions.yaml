@@ -822,6 +822,16 @@ components:
           maxItems: 99
           items:
             $ref: '#/components/schemas/PassengerSearch'
+        preferences:
+          description: There may be some additional(optional) search preferences that client may specify
+          $ref: '#/components/schemas/SearchPreferences'
+
+    SearchPreferences:
+      description: Optional search preferences such as requested currency, price filter, etc
+      type: object
+      properties:
+        preferredCurrency:
+          $ref: '#/components/schemas/Currency'
 
     AccommodationCriteria:
       description: Criteria for the accommodation search
