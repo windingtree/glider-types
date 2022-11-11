@@ -201,7 +201,10 @@ const main = async () => {
 };
 
 main()
-  .catch(console.error)
+  .catch((error) => {
+    console.log(error);
+    process.exit(1);
+  })
   .then(() => {
     console.log('Build is done');
   });
