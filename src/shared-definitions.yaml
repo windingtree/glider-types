@@ -841,10 +841,10 @@ components:
         location:
           $ref: '#/components/schemas/LocationSearch'
         hotelIds:
-          type: array
-            items:
-              type: string
           description: array of hotel IDs that search should be restricted to
+          type: array
+          items:
+            type: string
         arrival:
           type: string
           description: arrival day in the accommodation
