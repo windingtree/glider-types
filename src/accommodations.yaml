@@ -205,6 +205,65 @@ paths:
       x-codegen-request-body-name: body
 
   /orders/cancel/{orderId}:
+    get:
+      tags:
+        - orders
+      summary: Return an existing order by Order Id
+      operationId: getOrderByOrderId
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            $ref: '#/components/schemas/UUID'
+          required: true
+          description: Order Id of the order to return
+      responses:
+        200:
+          description: Order returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWithOfferResponse'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
+
     delete:
       tags:
         - orders
