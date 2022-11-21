@@ -204,17 +204,19 @@ paths:
         - bearerAuth: []
       x-codegen-request-body-name: body
 
-  /orders/cancel:
+  /orders/cancel/{orderId}:
     delete:
       tags:
         - orders
       summary: Cancel an existing order
       operationId: cancelOrder
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OrderCancellationRequest'
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            $ref: '#/components/schemas/UUID'
+          required: true
+          description: Order Id of the order to cancel
       responses:
         200:
           description: Order cancelled successfully

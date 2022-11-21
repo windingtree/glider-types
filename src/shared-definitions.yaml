@@ -845,14 +845,6 @@ components:
         guaranteeId:
           $ref: '#/components/schemas/UUID'
 
-    OrderCancellationRequest:
-      description: Cancellation of the order
-      type: object
-      required: ['orderId']
-      properties:
-        orderId:
-          $ref: '#/components/schemas/UUID'
-
     SearchResponse:
       description: An object to return search results
       type: object
