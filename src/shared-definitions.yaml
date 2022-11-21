@@ -73,10 +73,6 @@ components:
         taxes:
           description: The taxes to be collected when selling this service.
           $ref: '#/components/schemas/Amount'
-        isAmountBeforeTax:
-          type: boolean
-        decimalPlaces:
-          type: integer
 
     ServiceRestrictions:
       description: Service restrictions
