@@ -144,6 +144,185 @@ paths:
         - bearerAuth: []
       x-codegen-request-body-name: body
 
+  /orders:
+    get:
+      tags:
+        - orders
+      summary: Return an existing order by Offer Id
+      operationId: getOrderByOfferId
+      parameters:
+        - in: query
+          name: offerId
+          schema:
+            $ref: '#/components/schemas/UUID'
+          required: true
+          description: Offer Id of the order to return
+      responses:
+        200:
+          description: Order returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWithOfferResponse'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
+
+  /orders/{orderId}:
+    get:
+      tags:
+        - orders
+      summary: Return an existing order by Order Id
+      operationId: getOrderByOrderId
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            $ref: '#/components/schemas/UUID'
+          required: true
+          description: Order Id of the order to return
+      responses:
+        200:
+          description: Order returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWithOfferResponse'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
+
+    delete:
+      tags:
+        - orders
+      summary: Cancel an existing order
+      operationId: cancelOrder
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            $ref: '#/components/schemas/UUID'
+          required: true
+          description: Order Id of the order to cancel
+      responses:
+        200:
+          description: Order cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCancellationResponse'
+        401:
+          description: Authorization required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        405:
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        415:
+          description: Content should be application/json
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      x-codegen-request-body-name: body
+
   /orders/createWithOffer:
     post:
       tags:
@@ -204,63 +383,6 @@ paths:
         - bearerAuth: []
       x-codegen-request-body-name: body
 
-  /orders/cancel:
-    delete:
-      tags:
-        - orders
-      summary: Cancel an existing order
-      operationId: cancelOrder
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OrderCancellationRequest'
-      responses:
-        200:
-          description: Order cancelled successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrderCancellationResponse'
-        401:
-          description: Authorization required
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        403:
-          description: Not authorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        405:
-          description: Validation exception
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        415:
-          description: Content should be application/json
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        429:
-          description: Too many requests
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        500:
-          description: Internal Server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      security:
-        - bearerAuth: []
-      x-codegen-request-body-name: body
   /groups/search:
     post:
       tags:
