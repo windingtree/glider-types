@@ -296,7 +296,7 @@ components:
           'firstnames': ['Bob'],
           'gender': 'Male',
           'birthdate': '1980-03-21',
-          'contactInformation': ['+32123456789', 'contact@org.co.uk']
+          'contactInformation': ['+32123456789', 'contact@org.co.uk'],
         }
 
     LocationSearch:
@@ -326,7 +326,7 @@ components:
           'south': 50.0929802,
           'west': 14.4012451,
           'north': 50.0812615,
-          'east': 14.4394467
+          'east': 14.4394467,
         }
 
     LocationCircle:
@@ -425,7 +425,7 @@ components:
         {
           'type': 'refundable_with_deadline',
           'deadline': '2022-10-12T23:59:59.59Z',
-          'penaltyAmount': '100.00'
+          'penaltyAmount': '100.00',
         }
 
     AccommodationType:
@@ -462,7 +462,7 @@ components:
           'checkinoutPolicy',
           'otherPolicies',
           'media',
-          'roomTypes'
+          'roomTypes',
         ]
       properties:
         hotelId:
@@ -517,7 +517,7 @@ components:
           'media',
           'roomTypes',
           'id',
-          'providerHotelId'
+          'providerHotelId',
         ]
       properties:
         hotelId:
@@ -578,7 +578,7 @@ components:
           'size',
           'maximumOccupancy',
           'media',
-          'policies'
+          'policies',
         ]
       properties:
         name:
@@ -760,7 +760,7 @@ components:
       example:
         {
           '7b7b18e2-7357-4e98-9be6-aa182e0b090a':
-            { 'accommodation': 'prov.1234', 'roomType': 'ND' }
+            { 'accommodation': 'prov.1234', 'roomType': 'ND' },
         }
 
     AdditionalPricePlanProperties:
@@ -791,7 +791,7 @@ components:
       example: { 'mealPlan': 'BB', 'ratePlan': 'BAR', 'roomTypeId': 'FM4' }
 
     Order:
-      description: An Order object
+      description: Representation of the order
       type: object
       required: ['supplierReservationId', 'status']
       properties:
@@ -801,8 +801,7 @@ components:
         restrictions:
           $ref: '#/components/schemas/ServiceRestrictions'
         status:
-          description: Status of an order
-          type: string
+          $ref: '#/components/schemas/OrderStatus'
 
     SearchCriteria:
       description: An object to provide search criteria
@@ -910,13 +909,9 @@ components:
       required: ['orderId', 'order']
       properties:
         orderId:
-          description: The ID of the order Created
-          anyOf:
-            - $ref: '#/components/schemas/UUID'
+          $ref: '#/components/schemas/UUID'
         order:
-          description: The created order
-          anyOf:
-            - $ref: '#/components/schemas/Order'
+          $ref: '#/components/schemas/Order'
 
     OrderCancellationResponse:
       description: Confirmation of an order cancellation
@@ -924,14 +919,14 @@ components:
       required: ['orderId', 'status']
       properties:
         orderId:
-          description: Order ID
-          allOf:
-            - $ref: '#/components/schemas/UUID'
+          $ref: '#/components/schemas/UUID'
         status:
-          description: Result of cancellation
-          type: string
+          $ref: '#/components/schemas/OrderStatus'
       example:
-        { 'orderId': '11111111-2222-3333-4444-000000000001', 'status': 'CANCELLED' }
+        {
+          'orderId': '11111111-2222-3333-4444-000000000001',
+          'status': 'CANCELLED',
+        }
 
     Iban:
       description: The International Bank Account Number
@@ -1016,7 +1011,7 @@ components:
           'sourceAmount',
           'targetCurrency',
           'targetAmount',
-          'rate'
+          'rate',
         ]
       type: object
       properties:
@@ -1638,8 +1633,13 @@ components:
             $ref: '#/components/schemas/Amount'
       example:
         {
-          'EUR': { 'total': '12500.00', 'reserved': '4500.00', 'available': '8000.00' },
-          'CLP': { 'total': '45000', 'reserved': '0', 'available': '45000' }
+          'EUR':
+            {
+              'total': '12500.00',
+              'reserved': '4500.00',
+              'available': '8000.00',
+            },
+          'CLP': { 'total': '45000', 'reserved': '0', 'available': '45000' },
         }
 
     BankAddress:
@@ -1692,9 +1692,9 @@ components:
                   'postCode': '80687',
                   'city': 'München',
                   'country': 'Germany',
-                  'stateCode': null
-                }
-            }
+                  'stateCode': null,
+                },
+            },
         }
 
     MongoLocation:
@@ -1838,7 +1838,7 @@ components:
               'paymentValidationError',
               'networkError',
               'creationFailed',
-              'cancelled'
+              'cancelled',
             ]
         message:
           type: string
@@ -2087,7 +2087,7 @@ components:
           'firstnames': ['Bob'],
           'gender': 'Male',
           'birthdate': '1980-03-21',
-          'contactInformation': ['+32123456789', 'contact@org.co.uk']
+          'contactInformation': ['+32123456789', 'contact@org.co.uk'],
         }
 
     AdultGuest:
@@ -2278,3 +2278,13 @@ components:
         decimals:
           description: The number of decimals for this currency
           type: integer
+
+    OrderStatus:
+      description: Status of the order
+      type: string
+      enum:
+        - IN_PROGRESS
+        - CONFIRMED
+        - WAITLIST
+        - CANCELLED
+        - CREATION_FAILED
