@@ -97,6 +97,13 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/UUID'
+      requestBody:
+        description: Optional priced offer request criteria
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PricedOfferRequest'
       responses:
         200:
           description: Offer with confirmed price
