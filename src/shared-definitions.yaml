@@ -245,7 +245,8 @@ components:
             type: number
         loyaltyPrograms:
           description: A list of loyalty programs that this passenger benefits from
-          $ref: '#/components/schemas/LoyaltyPrograms'
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
             
       example: { 'type': 'ADT', 'count': 1 }
 
@@ -311,7 +312,8 @@ components:
               - $ref: '#/components/schemas/Email'
         loyaltyPrograms:
           description: A list of loyalty programs that this passenger benefits from
-          $ref: '#/components/schemas/LoyaltyPrograms'
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
       example:
         {
           'type': 'ADT',
@@ -842,10 +844,12 @@ components:
             $ref: '#/components/schemas/PassengerSearch'
         preferences:
           description: There may be some additional(optional) search preferences that client may specify
-          $ref: '#/components/schemas/SearchPreferences'
+          allOf:
+            - $ref: '#/components/schemas/SearchPreferences'
         loyaltyPrograms:
           description: Loyalty program(s) to be included as part of search criteria
-          $ref: '#/components/schemas/LoyaltyPrograms'
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
 
     SearchPreferences:
       description: Optional search preferences such as requested currency, price filter, etc
@@ -894,7 +898,8 @@ components:
           $ref: '#/components/schemas/UUID'
         loyaltyPrograms:
           description: Loyalty program(s) to be used when creating booking
-          $ref: '#/components/schemas/LoyaltyPrograms'
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
 
     SearchResponse:
       description: An object to return search results
@@ -928,7 +933,8 @@ components:
       properties:
         loyaltyPrograms:
           description: Loyalty program(s) to be included as part of priced offer request
-          $ref: '#/components/schemas/LoyaltyPrograms'
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
 
 
     PricedOfferResponse:
