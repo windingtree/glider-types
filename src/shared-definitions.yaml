@@ -210,6 +210,22 @@ components:
           type: string
           example: 'China'
 
+    LoyaltyProgram:
+      description: Object containing properties of loyalty program that buyer benefits from
+      type: object
+      required: ['accountNumber', 'programName']
+      properties:
+        accountNumber:
+          type: string
+        programName:
+          type: string
+
+    LoyaltyPrograms:
+      description: A list of loyalty programs
+      type: array
+      items:
+        $ref: '#/components/schemas/LoyaltyProgram'
+
     PassengerSearch:
       description: A representation of a passenger
       type: object
@@ -227,6 +243,11 @@ components:
           type: array
           items:
             type: number
+        loyaltyPrograms:
+          description: A list of loyalty programs that this passenger benefits from
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
+            
       example: { 'type': 'ADT', 'count': 1 }
 
     PassengerBooking:
@@ -289,6 +310,10 @@ components:
             oneOf:
               - $ref: '#/components/schemas/PhoneNumber'
               - $ref: '#/components/schemas/Email'
+        loyaltyPrograms:
+          description: A list of loyalty programs that this passenger benefits from
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
       example:
         {
           'type': 'ADT',
@@ -819,7 +844,12 @@ components:
             $ref: '#/components/schemas/PassengerSearch'
         preferences:
           description: There may be some additional(optional) search preferences that client may specify
-          $ref: '#/components/schemas/SearchPreferences'
+          allOf:
+            - $ref: '#/components/schemas/SearchPreferences'
+        loyaltyPrograms:
+          description: Loyalty program(s) to be included as part of search criteria
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
 
     SearchPreferences:
       description: Optional search preferences such as requested currency, price filter, etc
@@ -866,6 +896,10 @@ components:
             $ref: '#/components/schemas/PassengerBooking'
         guaranteeId:
           $ref: '#/components/schemas/UUID'
+        loyaltyPrograms:
+          description: Loyalty program(s) to be used when creating booking
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
 
     SearchResponse:
       description: An object to return search results
@@ -892,6 +926,16 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/PassengerSearch'
+
+    PricedOfferRequest:
+      description: An object to provide optional priced offer details
+      type: object
+      properties:
+        loyaltyPrograms:
+          description: Loyalty program(s) to be included as part of priced offer request
+          allOf:
+            - $ref: '#/components/schemas/LoyaltyPrograms'
+
 
     PricedOfferResponse:
       description: An offer with confirmed price
