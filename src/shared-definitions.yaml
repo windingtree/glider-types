@@ -247,10 +247,11 @@ components:
           description: postal code
           type: string
           example: 417 64
-        country:
-          description: country
+        countryCode:
+          description: The 2-letters ISO country code
           type: string
-          example: 'China'
+          pattern: '^[A-Z]{2}$'
+          example: 'US'
 
     PassengerSearch:
       description: A representation of a passenger
