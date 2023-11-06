@@ -226,6 +226,33 @@ components:
       items:
         $ref: '#/components/schemas/LoyaltyProgram'
 
+    PassengerAddress:
+      description: Address of a passenger
+      type: object
+      required: ['addressLine1']
+      properties:
+        addressLine1:
+          description: address line 1
+          type: string
+          example: Maskingatan 11
+        addressLine2:
+          description: address line 2
+          type: string
+          example: Maskingatan 11
+        city:
+          description: city name
+          type: string
+          example: Gothenburg
+        postalCode:
+          description: postal code
+          type: string
+          example: 417 64
+        countryCode:
+          description: The 2-letters ISO country code
+          type: string
+          pattern: '^[A-Z]{2}$'
+          example: 'US'
+
     PassengerSearch:
       description: A representation of a passenger
       type: object
@@ -314,6 +341,9 @@ components:
           description: A list of loyalty programs that this passenger benefits from
           allOf:
             - $ref: '#/components/schemas/LoyaltyPrograms'
+        address:
+          $ref: '#/components/schemas/PassengerAddress'
+
       example:
         {
           'type': 'ADT',
